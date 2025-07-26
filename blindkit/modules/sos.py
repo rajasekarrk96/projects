@@ -22,9 +22,5 @@ def send_sos():
     location = get_location()
     message_body = f"🚨 SOS Alert 🚨\nPlease send help!\nLocation: {location}"
     message = "SOS sent"
-    """message = client.messages.create(
-        from_="+123456789",
-        body=message_body,
-        to="+91999963170"
-    )"""
+    
     return message.sid
