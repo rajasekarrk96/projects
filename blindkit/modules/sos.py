@@ -17,14 +17,14 @@ def get_location():
         return "Location unavailable"
 
 def send_sos():
-    client = Client("ACa10564d5a53f60c978100168e3b2b9e4", "f142c4816281d22b4cf2b2404abeaf9b")
+    client = Client("account", "password")
     
     location = get_location()
     message_body = f"🚨 SOS Alert 🚨\nPlease send help!\nLocation: {location}"
     
     message = client.messages.create(
-        from_="+18142508047",
+        from_="+123456789",
         body=message_body,
-        to="+919843163170"
+        to="+91999963170"
     )
     return message.sid
