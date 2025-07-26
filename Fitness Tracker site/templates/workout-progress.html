@@ -1,0 +1,108 @@
+{% extends "layout.html" %}
+
+{% block title %}Workout Progress - Workout Sphere{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Workout Progress</h1>
+            <a href="{{ url_for('dashboard') }}" class="text-blue-600 hover:text-blue-800">Back to Dashboard</a>
+        </div>
+
+        {% if current_workout and previous_workout %}
+        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+            <div class="p-6">
+                <div class="mb-6">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-4">Workout Comparison</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-blue-800 mb-2">Current Workout</h3>
+                            <p class="text-sm text-gray-600">{{ current_workout.title }}</p>
+                            <p class="text-sm text-gray-600">Volume: {{ current_volume|round(2) }} kg</p>
+                            <p class="text-sm text-gray-600">Date: {{ current_workout.date.strftime('%B %d, %Y') if current_workout.date else 'No date' }}</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <h3 class="text-lg font-medium text-gray-800 mb-2">Previous Workout</h3>
+                            <p class="text-sm text-gray-600">{{ previous_workout.title }}</p>
+                            <p class="text-sm text-gray-600">Volume: {{ previous_volume|round(2) }} kg</p>
+                            <p class="text-sm text-gray-600">Date: {{ previous_workout.date.strftime('%B %d, %Y') if previous_workout.date else 'No date' }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full h-80">
+                        <canvas id="progressChart" 
+                            data-previous-volume="{{ previous_volume }}"
+                            data-current-volume="{{ current_volume }}">
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <p class="text-gray-600 text-center">Not enough workout data to show progress. Complete at least two workouts to see the comparison.</p>
+            <div class="text-center mt-4">
+                <a href="{{ url_for('add_workout') }}" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
+                    Add a Workout
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if current_workout and previous_workout %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const canvas = document.getElementById('progressChart');
+    const ctx = canvas.getContext('2d');
+    const previousVolume = parseFloat(canvas.dataset.previousVolume);
+    const currentVolume = parseFloat(canvas.dataset.currentVolume);
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Previous Workout', 'Current Workout'],
+            datasets: [{
+                label: 'Total Volume (kg)',
+                data: [previousVolume, currentVolume],
+                backgroundColor: [
+                    'rgba(156, 163, 175, 0.5)',
+                    'rgba(59, 130, 246, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(156, 163, 175, 1)',
+                    'rgba(59, 130, 246, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Total Volume (kg)'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Workout Volume Comparison',
+                    font: {
+                        size: 16
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %} 
