@@ -1,0 +1,91 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">{{ workout.title }}</h1>
+            
+            <div class="mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-gray-600">Duration:</span>
+                    <span class="font-medium">{{ workout.duration }} minutes</span>
+                </div>
+                
+                {% if workout.description %}
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-1">Description</h3>
+                    <p class="text-gray-600">{{ workout.description }}</p>
+                </div>
+                {% endif %}
+                
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Timer</h3>
+                    <div class="flex items-center justify-center space-x-4">
+                        <div id="timer-display" class="text-4xl font-bold">00:00</div>
+                        <button id="start-timer" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+                            Start
+                        </button>
+                        <button id="reset-timer" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex justify-end">
+                <a href="{{ url_for('workouts') }}" class="text-blue-500 hover:text-blue-600 font-medium">
+                    Back to Workouts
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let timer;
+    let seconds = 0;
+    const maxSeconds = {{ workout.duration }} * 60;
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        document.getElementById('timer-display').textContent = 
+            `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+    
+    document.getElementById('start-timer').addEventListener('click', function() {
+        if (this.textContent === 'Start') {
+            this.textContent = 'Pause';
+            timer = setInterval(() => {
+                if (seconds < maxSeconds) {
+                    seconds++;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timer);
+                    this.textContent = 'Start';
+                    // Increment exercise count when timer completes
+                    fetch(`/api/workout/${ {{ workout.id }} }/complete`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+            }, 1000);
+        } else {
+            this.textContent = 'Start';
+            clearInterval(timer);
+        }
+    });
+    
+    document.getElementById('reset-timer').addEventListener('click', function() {
+        clearInterval(timer);
+        seconds = 0;
+        updateTimerDisplay();
+        document.getElementById('start-timer').textContent = 'Start';
+    });
+    
+    updateTimerDisplay();
+</script>
+{% endblock %}
