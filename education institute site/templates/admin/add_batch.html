@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Batch - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin.batches') }}">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.faculty') }}">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.reports') }}">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Add New Batch</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('admin.batches') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Batches
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Batch Form -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-plus me-2"></i>Batch Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="course_id" class="form-label">Course *</label>
+                                        <select class="form-select" id="course_id" name="course_id" required>
+                                            <option value="">Select a course</option>
+                                            {% for course in courses %}
+                                                <option value="{{ course.id }}">{{ course.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name" class="form-label">Batch Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" required
+                                               placeholder="e.g., Morning Batch, Evening Batch">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="start_date" class="form-label">Start Date *</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="end_date" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date"
+                                               placeholder="Leave empty for ongoing batches">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="timing" class="form-label">Timing</label>
+                                        <input type="text" class="form-control" id="timing" name="timing"
+                                               placeholder="e.g., 9:00 AM - 12:00 PM">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="max_students" class="form-label">Maximum Students *</label>
+                                        <input type="number" class="form-control" id="max_students" name="max_students" 
+                                               min="1" max="100" required placeholder="e.g., 30">
+                                    </div>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('admin.batches') }}" class="btn btn-secondary me-md-2">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Create Batch
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Help</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Batch Creation Guidelines:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Select the appropriate course</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Use descriptive batch names</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Set realistic capacity limits</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Include timing information</li>
+                            </ul>
+                            
+                            <hr>
+                            
+                            <h6>Examples:</h6>
+                            <small class="text-muted">
+                                <strong>Batch Name:</strong> "Python Morning Batch A"<br>
+                                <strong>Timing:</strong> "9:00 AM - 12:00 PM"<br>
+                                <strong>Max Students:</strong> 25
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- Available Courses -->
+                    {% if courses %}
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-book me-2"></i>Available Courses</h5>
+                        </div>
+                        <div class="card-body">
+                            {% for course in courses %}
+                            <div class="mb-2">
+                                <strong>{{ course.name }}</strong><br>
+                                <small class="text-muted">
+                                    Duration: {{ course.duration_months }} months | 
+                                    Fee: ₹{{ "%.2f"|format(course.fee) }}
+                                </small>
+                            </div>
+                            {% if not loop.last %}<hr>{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.addEventListener('DOMContentLoaded', function() {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('start_date').setAttribute('min', today);
+    
+    // Update end date minimum when start date changes
+    document.getElementById('start_date').addEventListener('change', function() {
+        document.getElementById('end_date').setAttribute('min', this.value);
+    });
+});
+</script>
+{% endblock %}

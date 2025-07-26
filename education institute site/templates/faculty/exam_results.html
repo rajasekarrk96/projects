@@ -1,0 +1,268 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Results - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-clipboard-list"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Exam Results</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('faculty.exams') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Exams
+                        </a>
+                        <button class="btn btn-sm btn-primary" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print Results
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Exam Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Exam ID:</strong></td>
+                                            <td>{{ results.exam_id }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Title:</strong></td>
+                                            <td>{{ results.title }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Total Students:</strong></td>
+                                            <td>{{ results.total_students }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Submitted:</strong></td>
+                                            <td>{{ results.submitted }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Average Score:</strong></td>
+                                            <td>{{ results.average_score }}%</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Score Range:</strong></td>
+                                            <td>{{ results.lowest_score }}% - {{ results.highest_score }}%</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body text-center">
+                            <h4>{{ results.total_students }}</h4>
+                            <p class="mb-0">Total Students</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body text-center">
+                            <h4>{{ results.submitted }}</h4>
+                            <p class="mb-0">Submitted</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body text-center">
+                            <h4>{{ results.average_score }}%</h4>
+                            <p class="mb-0">Average Score</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body text-center">
+                            <h4>{{ results.highest_score }}%</h4>
+                            <p class="mb-0">Highest Score</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Results -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-users me-2"></i>Student Results</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Student Name</th>
+                                    <th>Score</th>
+                                    <th>Grade</th>
+                                    <th>Status</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in results.students %}
+                                <tr>
+                                    <td><strong>{{ loop.index }}</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                {{ student.name[0].upper() }}
+                                            </div>
+                                            {{ student.name }}
+                                        </div>
+                                    </td>
+                                    <td><strong>{{ student.score }}%</strong></td>
+                                    <td>
+                                        {% if student.score >= 90 %}
+                                            <span class="badge bg-success">A+</span>
+                                        {% elif student.score >= 80 %}
+                                            <span class="badge bg-primary">A</span>
+                                        {% elif student.score >= 70 %}
+                                            <span class="badge bg-info">B</span>
+                                        {% elif student.score >= 60 %}
+                                            <span class="badge bg-warning">C</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">F</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if student.status == 'Submitted' %}
+                                            <span class="badge bg-success">{{ student.status }}</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">{{ student.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="progress" style="width: 100px;">
+                                            <div class="progress-bar 
+                                                {% if student.score >= 80 %}bg-success
+                                                {% elif student.score >= 60 %}bg-warning
+                                                {% else %}bg-danger{% endif %}" 
+                                                style="width: {{ student.score }}%">
+                                                {{ student.score }}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-primary w-100" onclick="window.print()">
+                                        <i class="fas fa-print me-2"></i>Print Results
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-success w-100" onclick="exportToExcel()">
+                                        <i class="fas fa-file-excel me-2"></i>Export to Excel
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-info w-100" onclick="generateReport()">
+                                        <i class="fas fa-file-pdf me-2"></i>Generate PDF Report
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <a href="{{ url_for('faculty.exams') }}" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-arrow-left me-2"></i>Back to Exams
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function exportToExcel() {
+    alert('📊 Exporting results to Excel format...\n\nThis would generate an Excel file with detailed student results.');
+    // In real implementation: window.location.href = '/faculty/exam/{{ results.exam_id }}/export-excel';
+}
+
+function generateReport() {
+    alert('📄 Generating comprehensive PDF report...\n\nThis would create a detailed analysis report.');
+    // In real implementation: window.location.href = '/faculty/exam/{{ results.exam_id }}/generate-report';
+}
+</script>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+
+@media print {
+    .sidebar, .btn-toolbar, .card:last-child {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+</style>
+{% endblock %}

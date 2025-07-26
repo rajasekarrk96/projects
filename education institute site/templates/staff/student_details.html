@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Student Details - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.enquiries') }}">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('staff.admissions') }}">
+                            <i class="fas fa-user-plus"></i>Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.fees') }}">
+                            <i class="fas fa-money-bill-wave"></i>Fee Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Student Details</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('staff.admissions') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Admissions
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Profile -->
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-user me-2"></i>Student Profile</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3">
+                                {{ student.name[0].upper() }}
+                            </div>
+                            <h4>{{ student.name }}</h4>
+                            <p class="text-muted">Student ID: {{ "%03d"|format(student.id) }}</p>
+                            <span class="badge bg-success mb-3">{{ student.status }}</span>
+                            
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-edit me-2"></i>Edit Profile
+                                </button>
+                                <button class="btn btn-outline-info">
+                                    <i class="fas fa-money-bill me-2"></i>View Fees
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Personal Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Full Name</label>
+                                    <p class="fw-bold">{{ student.name }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Email Address</label>
+                                    <p class="fw-bold">{{ student.email }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Phone Number</label>
+                                    <p class="fw-bold">{{ student.phone }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Admission Date</label>
+                                    <p class="fw-bold">{{ student.admission_date }}</p>
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label text-muted">Address</label>
+                                    <p class="fw-bold">{{ student.address }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-graduation-cap me-2"></i>Academic Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Course</label>
+                                    <p class="fw-bold">
+                                        <span class="badge bg-primary">{{ student.course }}</span>
+                                    </p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Batch</label>
+                                    <p class="fw-bold">{{ student.batch }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Status</label>
+                                    <p class="fw-bold">
+                                        <span class="badge bg-success">{{ student.status }}</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Guardian Information -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-users me-2"></i>Guardian Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Guardian Name</label>
+                                    <p class="fw-bold">{{ student.guardian_name }}</p>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label text-muted">Guardian Phone</label>
+                                    <p class="fw-bold">{{ student.guardian_phone }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-primary w-100">
+                                        <i class="fas fa-edit me-2"></i>Edit Details
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-success w-100">
+                                        <i class="fas fa-money-bill me-2"></i>Record Payment
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-info w-100">
+                                        <i class="fas fa-calendar-check me-2"></i>Mark Attendance
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-warning w-100">
+                                        <i class="fas fa-envelope me-2"></i>Send Message
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 2rem;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

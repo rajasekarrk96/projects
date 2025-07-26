@@ -1,0 +1,363 @@
+{% extends "base.html" %}
+
+{% block title %}Attendance Management - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-clipboard-list"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Attendance Management</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Mark Attendance
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download"></i> Export Report
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date and Batch Selection -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <label for="attendanceDate" class="form-label">Select Date</label>
+                    <input type="date" class="form-control" id="attendanceDate" value="{{ current_date }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="batchSelect" class="form-label">Select Batch</label>
+                    <select class="form-select" id="batchSelect">
+                        <option value="">All Batches</option>
+                        <option value="morning">Morning Batch (9:00 AM - 12:00 PM)</option>
+                        <option value="afternoon">Afternoon Batch (1:00 PM - 4:00 PM)</option>
+                        <option value="evening">Evening Batch (5:00 PM - 8:00 PM)</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label for="courseSelect" class="form-label">Select Course</label>
+                    <select class="form-select" id="courseSelect">
+                        <option value="">All Courses</option>
+                        <option value="python">Python Programming</option>
+                        <option value="web">Web Development</option>
+                        <option value="data_science">Data Science</option>
+                        <option value="java">Java Programming</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">45</h4>
+                                    <p class="card-text">Total Students</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-users fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">38</h4>
+                                    <p class="card-text">Present Today</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">7</h4>
+                                    <p class="card-text">Absent Today</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-times-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">84%</h4>
+                                    <p class="card-text">Attendance Rate</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-percentage fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attendance Table -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-list me-2"></i>Student Attendance - Today</h5>
+                    <button class="btn btn-sm btn-success" onclick="markAllPresent()">
+                        <i class="fas fa-check-double me-1"></i>Mark All Present
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Course</th>
+                                    <th>Batch</th>
+                                    <th>Status</th>
+                                    <th>Time In</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>STU001</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                A
+                                            </div>
+                                            Amit Kumar
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-primary">Python Programming</span></td>
+                                    <td>Morning</td>
+                                    <td><span class="badge bg-success">Present</span></td>
+                                    <td>9:15 AM</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-warning" onclick="markAbsent('STU001')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>STU002</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                P
+                                            </div>
+                                            Priya Sharma
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-info">Web Development</span></td>
+                                    <td>Afternoon</td>
+                                    <td><span class="badge bg-danger">Absent</span></td>
+                                    <td>-</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-success" onclick="markPresent('STU002')">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>STU003</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-warning text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                R
+                                            </div>
+                                            Rahul Singh
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-secondary">Data Science</span></td>
+                                    <td>Evening</td>
+                                    <td><span class="badge bg-success">Present</span></td>
+                                    <td>5:10 PM</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-warning" onclick="markAbsent('STU003')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>STU004</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-info text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                S
+                                            </div>
+                                            Sneha Patel
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-primary">Python Programming</span></td>
+                                    <td>Morning</td>
+                                    <td><span class="badge bg-warning">Late</span></td>
+                                    <td>9:45 AM</td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-success" onclick="markPresent('STU004')">
+                                                <i class="fas fa-check"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-warning" onclick="markAbsent('STU004')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-primary w-100" onclick="bulkMarkAttendance()">
+                                        <i class="fas fa-users me-2"></i>Bulk Mark Attendance
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-info w-100">
+                                        <i class="fas fa-chart-line me-2"></i>Attendance Analytics
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-success w-100">
+                                        <i class="fas fa-download me-2"></i>Export Report
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-warning w-100">
+                                        <i class="fas fa-bell me-2"></i>Send Notifications
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set today's date as default
+document.getElementById('attendanceDate').value = new Date().toISOString().split('T')[0];
+
+function markPresent(studentId) {
+    if (confirm('Mark student ' + studentId + ' as present?')) {
+        // In a real application, this would make an AJAX call
+        alert('Student ' + studentId + ' marked as present');
+        location.reload();
+    }
+}
+
+function markAbsent(studentId) {
+    if (confirm('Mark student ' + studentId + ' as absent?')) {
+        // In a real application, this would make an AJAX call
+        alert('Student ' + studentId + ' marked as absent');
+        location.reload();
+    }
+}
+
+function markAllPresent() {
+    if (confirm('Mark all students as present for today?')) {
+        // In a real application, this would make an AJAX call
+        alert('All students marked as present');
+        location.reload();
+    }
+}
+
+function bulkMarkAttendance() {
+    // In a real application, this would open a modal for bulk operations
+    alert('Bulk attendance marking feature would be implemented here');
+}
+
+// Filter functionality
+document.getElementById('batchSelect').addEventListener('change', function() {
+    filterAttendance();
+});
+
+document.getElementById('courseSelect').addEventListener('change', function() {
+    filterAttendance();
+});
+
+function filterAttendance() {
+    const batchFilter = document.getElementById('batchSelect').value.toLowerCase();
+    const courseFilter = document.getElementById('courseSelect').value.toLowerCase();
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    tableRows.forEach(row => {
+        const batchText = row.cells[3].textContent.toLowerCase();
+        const courseText = row.querySelector('.badge').textContent.toLowerCase();
+        
+        const batchMatch = !batchFilter || batchText.includes(batchFilter);
+        const courseMatch = !courseFilter || courseText.includes(courseFilter);
+        
+        row.style.display = batchMatch && courseMatch ? '' : 'none';
+    });
+}
+</script>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.875rem;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

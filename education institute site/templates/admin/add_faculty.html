@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Faculty - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.batches') }}">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin.faculty') }}">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.reports') }}">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Add New Faculty</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('admin.faculty') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Faculty
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Faculty Form -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-user-plus me-2"></i>Faculty Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name" class="form-label">Full Name *</label>
+                                        <input type="text" class="form-control" id="name" name="name" required
+                                               placeholder="Enter faculty full name">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="email" class="form-label">Email Address *</label>
+                                        <input type="email" class="form-control" id="email" name="email" required
+                                               placeholder="faculty@edusphere.com">
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="password" class="form-label">Password *</label>
+                                        <input type="password" class="form-control" id="password" name="password" required
+                                               placeholder="Enter secure password" minlength="6">
+                                        <div class="form-text">Password must be at least 6 characters long.</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="confirm_password" class="form-label">Confirm Password *</label>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" required
+                                               placeholder="Confirm password">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone"
+                                           placeholder="Enter phone number">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="specialization" class="form-label">Specialization</label>
+                                    <input type="text" class="form-control" id="specialization" name="specialization"
+                                           placeholder="e.g., Python Programming, Web Development">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="experience" class="form-label">Experience (Years)</label>
+                                    <input type="number" class="form-control" id="experience" name="experience"
+                                           min="0" max="50" placeholder="Years of teaching experience">
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="bio" class="form-label">Bio/Description</label>
+                                    <textarea class="form-control" id="bio" name="bio" rows="3"
+                                              placeholder="Brief description about the faculty member"></textarea>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('admin.faculty') }}" class="btn btn-secondary me-md-2">
+                                        <i class="fas fa-times me-2"></i>Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Add Faculty
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Guidelines</h5>
+                        </div>
+                        <div class="card-body">
+                            <h6>Faculty Account Creation:</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-check text-success me-2"></i>Use professional email addresses</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Create strong passwords</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Include relevant specializations</li>
+                                <li><i class="fas fa-check text-success me-2"></i>Add teaching experience details</li>
+                            </ul>
+                            
+                            <hr>
+                            
+                            <h6>Default Permissions:</h6>
+                            <small class="text-muted">
+                                New faculty members will have access to:<br>
+                                • Faculty dashboard<br>
+                                • Student management<br>
+                                • Attendance tracking<br>
+                                • Grade management<br>
+                                • Course materials
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-shield-alt me-2"></i>Security</h5>
+                        </div>
+                        <div class="card-body">
+                            <p class="small text-muted mb-2">
+                                <i class="fas fa-lock me-1"></i>
+                                Passwords are securely hashed and stored.
+                            </p>
+                            <p class="small text-muted mb-2">
+                                <i class="fas fa-envelope me-1"></i>
+                                Faculty will receive login credentials via email.
+                            </p>
+                            <p class="small text-muted mb-0">
+                                <i class="fas fa-user-check me-1"></i>
+                                Account activation is automatic upon creation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password confirmation validation
+document.addEventListener('DOMContentLoaded', function() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirm_password');
+    
+    function validatePassword() {
+        if (password.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity("Passwords don't match");
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+    
+    password.addEventListener('change', validatePassword);
+    confirmPassword.addEventListener('keyup', validatePassword);
+});
+</script>
+{% endblock %}

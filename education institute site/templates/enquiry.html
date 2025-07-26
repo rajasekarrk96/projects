@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Enquiry Form - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card mt-5">
+                <div class="card-header text-center">
+                    <h4><i class="fas fa-info-circle me-2"></i>Course Enquiry Form</h4>
+                    <p class="mb-0">Tell us about your interest and we'll get back to you soon!</p>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Full Name *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="phone" class="form-label">Phone Number *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        <input type="tel" class="form-control" id="phone" name="phone" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                <input type="email" class="form-control" id="email" name="email">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="course_interest" class="form-label">Course of Interest</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-graduation-cap"></i></span>
+                                <select class="form-select" id="course_interest" name="course_interest">
+                                    <option value="">Select a course</option>
+                                    {% for course in courses %}
+                                    <option value="{{ course.name }}">{{ course.name }} - {{ course.duration }}</option>
+                                    {% endfor %}
+                                    <option value="Other">Other (Please specify in message)</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Additional Information</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-comment"></i></span>
+                                <textarea class="form-control" id="message" name="message" rows="4" placeholder="Tell us about your background, goals, or any specific questions you have..."></textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Enquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Course Information -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-list me-2"></i>Available Courses</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for course in courses %}
+                        <div class="col-md-6 mb-3">
+                            <div class="border rounded p-3">
+                                <h6 class="text-primary">{{ course.name }}</h6>
+                                <p class="text-muted mb-2">{{ course.description[:100] }}...</p>
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-info">{{ course.duration }}</span>
+                                    <span class="text-success fw-bold">₹{{ course.fee }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

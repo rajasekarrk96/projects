@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Faculty Dashboard - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-file-alt"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Faculty Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="text-muted">Welcome, {{ current_user.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Faculty Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-user me-2"></i>Faculty Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Employee ID:</strong> {{ faculty.employee_id }}</p>
+                                    <p><strong>Qualification:</strong> {{ faculty.qualification }}</p>
+                                    <p><strong>Experience:</strong> {{ faculty.experience }} years</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Specialization:</strong> {{ faculty.specialization }}</p>
+                                    <p><strong>Joining Date:</strong> {{ faculty.joining_date.strftime('%d %B %Y') }}</p>
+                                    <p><strong>Total Students:</strong> {{ total_students }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ assigned_batches|length }}</h3>
+                                <p>Assigned Batches</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-layer-group fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ total_students }}</h3>
+                                <p>Total Students</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-users fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ faculty.salary }}</h3>
+                                <p>Monthly Salary (₹)</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-rupee-sign fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned Batches -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-users me-2"></i>My Assigned Batches</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if assigned_batches %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Batch Name</th>
+                                                <th>Course</th>
+                                                <th>Students</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for batch in assigned_batches %}
+                                            <tr>
+                                                <td>{{ batch.name }}</td>
+                                                <td>{{ batch.course.name }}</td>
+                                                <td>
+                                                    <span class="badge bg-primary">{{ batch.current_students }}/{{ batch.max_students }}</span>
+                                                </td>
+                                                <td>{{ batch.start_date.strftime('%d %b %Y') }}</td>
+                                                <td>{{ batch.end_date.strftime('%d %b %Y') }}</td>
+                                                <td>
+                                                    <a href="{{ url_for('faculty.take_attendance', batch_id=batch.id) }}" class="btn btn-sm btn-primary">
+                                                        <i class="fas fa-calendar-check me-1"></i>Attendance
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No batches assigned yet</h5>
+                                    <p class="text-muted">Contact the administrator to get assigned to batches.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <a href="{{ url_for('faculty.attendance') }}" class="btn btn-primary w-100">
+                                        <i class="fas fa-calendar-check me-2"></i>Mark Attendance
+                                    </a>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <a href="{{ url_for('faculty.exams') }}" class="btn btn-success w-100">
+                                        <i class="fas fa-file-alt me-2"></i>Manage Exams
+                                    </a>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <a href="{{ url_for('faculty.add_exam') }}" class="btn btn-info w-100">
+                                        <i class="fas fa-plus me-2"></i>Schedule Exam
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

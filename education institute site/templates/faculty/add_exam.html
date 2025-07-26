@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Schedule Exam - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-clipboard-list"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Schedule New Exam</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('faculty.exams') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Exams
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Form -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-plus me-2"></i>Exam Details</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_title" class="form-label">Exam Title <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="exam_title" name="exam_title" required>
+                                        <div class="form-text">e.g., Python Programming - Unit Test 1</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="course" class="form-label">Course <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="course" name="course" required>
+                                            <option value="">Select Course</option>
+                                            <option value="python">Python Programming</option>
+                                            <option value="web">Web Development</option>
+                                            <option value="data_science">Data Science</option>
+                                            <option value="java">Java Programming</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_date" class="form-label">Exam Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="exam_date" name="exam_date" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_time" class="form-label">Exam Time <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="exam_time" name="exam_time" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="duration" class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="duration" name="duration" min="30" max="180" required>
+                                        <div class="form-text">Duration in minutes (30-180)</div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="total_marks" class="form-label">Total Marks <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="total_marks" name="total_marks" min="10" max="100" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_type" class="form-label">Exam Type <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="exam_type" name="exam_type" required>
+                                            <option value="">Select Type</option>
+                                            <option value="unit_test">Unit Test</option>
+                                            <option value="mid_term">Mid Term</option>
+                                            <option value="final">Final Exam</option>
+                                            <option value="practical">Practical Exam</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="batch" class="form-label">Batch <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="batch" name="batch" required>
+                                            <option value="">Select Batch</option>
+                                            <option value="morning">Morning Batch (9:00 AM - 12:00 PM)</option>
+                                            <option value="afternoon">Afternoon Batch (1:00 PM - 4:00 PM)</option>
+                                            <option value="evening">Evening Batch (5:00 PM - 8:00 PM)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="instructions" class="form-label">Exam Instructions</label>
+                                    <textarea class="form-control" id="instructions" name="instructions" rows="4" placeholder="Enter any special instructions for the exam..."></textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="syllabus" class="form-label">Syllabus/Topics Covered</label>
+                                    <textarea class="form-control" id="syllabus" name="syllabus" rows="3" placeholder="List the topics that will be covered in this exam..."></textarea>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('faculty.exams') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Schedule Exam
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exam Guidelines -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Exam Guidelines</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Schedule exams at least 3 days in advance
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Ensure exam duration is appropriate for the syllabus
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Provide clear instructions to students
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Verify batch timings before scheduling
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success me-2"></i>
+                                    Include all relevant topics in syllabus
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-clock me-2"></i>Recommended Durations</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Unit Test:</span>
+                                <span class="badge bg-info">60 mins</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Mid Term:</span>
+                                <span class="badge bg-warning">90 mins</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Final Exam:</span>
+                                <span class="badge bg-danger">120 mins</span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span>Practical:</span>
+                                <span class="badge bg-success">180 mins</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.getElementById('exam_date').min = new Date().toISOString().split('T')[0];
+
+// Auto-fill duration based on exam type
+document.getElementById('exam_type').addEventListener('change', function() {
+    const durationsMap = {
+        'unit_test': 60,
+        'mid_term': 90,
+        'final': 120,
+        'practical': 180
+    };
+    
+    const selectedType = this.value;
+    if (durationsMap[selectedType]) {
+        document.getElementById('duration').value = durationsMap[selectedType];
+    }
+});
+</script>
+{% endblock %}

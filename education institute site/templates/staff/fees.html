@@ -1,0 +1,345 @@
+{% extends "base.html" %}
+
+{% block title %}Fee Management - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.enquiries') }}">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.admissions') }}">
+                            <i class="fas fa-user-plus"></i>Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('staff.fees') }}">
+                            <i class="fas fa-money-bill-wave"></i>Fee Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Fee Management</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-plus"></i> Record Payment
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fee Statistics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-rupee-sign fa-2x text-success mb-2"></i>
+                            <h3 class="text-success">₹2,45,000</h3>
+                            <p class="text-muted mb-0">Total Collected</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-calendar-day fa-2x text-primary mb-2"></i>
+                            <h3 class="text-primary">₹15,000</h3>
+                            <p class="text-muted mb-0">Today's Collection</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-clock fa-2x text-warning mb-2"></i>
+                            <h3 class="text-warning">₹45,000</h3>
+                            <p class="text-muted mb-0">Pending Fees</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger mb-2"></i>
+                            <h3 class="text-danger">12</h3>
+                            <p class="text-muted mb-0">Overdue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fee Records -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-money-bill-wave me-2"></i>Fee Records</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Search and Filter -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" placeholder="Search by student name...">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="">All Status</option>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                                <option value="overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">From</span>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group">
+                                <span class="input-group-text">To</span>
+                                <input type="date" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fee Table -->
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Receipt #</th>
+                                    <th>Student Name</th>
+                                    <th>Course</th>
+                                    <th>Amount</th>
+                                    <th>Due Date</th>
+                                    <th>Payment Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in fee_records %}
+                                <tr>
+                                    <td><strong>{{ record.receipt_no }}</strong></td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                {{ record.student_name[0].upper() }}
+                                            </div>
+                                            {{ record.student_name }}
+                                        </div>
+                                    </td>
+                                    <td><span class="badge bg-primary">{{ record.course }}</span></td>
+                                    <td><strong>₹{{ "{:,}".format(record.amount) }}</strong></td>
+                                    <td>{{ record.due_date }}</td>
+                                    <td>{{ record.payment_date or '-' }}</td>
+                                    <td>
+                                        {% if record.status == 'Paid' %}
+                                            <span class="badge bg-success">{{ record.status }}</span>
+                                        {% elif record.status == 'Pending' %}
+                                            <span class="badge bg-warning">{{ record.status }}</span>
+                                        {% elif record.status == 'Overdue' %}
+                                            <span class="badge bg-danger">{{ record.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if record.status == 'Paid' %}
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <a href="{{ url_for('staff.view_receipt', receipt_no=record.receipt_no) }}" class="btn btn-outline-primary" title="View Receipt">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('staff.print_receipt', receipt_no=record.receipt_no) }}" class="btn btn-outline-info" title="Print Receipt">
+                                                    <i class="fas fa-print"></i>
+                                                </a>
+                                            </div>
+                                        {% else %}
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-success" title="Record Payment" onclick="recordPayment('{{ record.receipt_no }}')">
+                                                    <i class="fas fa-money-bill"></i>
+                                                </button>
+                                                {% if record.status == 'Overdue' %}
+                                                    <button type="button" class="btn btn-outline-danger" title="Send Notice" onclick="sendNotice('{{ record.receipt_no }}')">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </button>
+                                                {% else %}
+                                                    <button type="button" class="btn btn-outline-warning" title="Send Reminder" onclick="sendReminder('{{ record.receipt_no }}')">
+                                                        <i class="fas fa-bell"></i>
+                                                    </button>
+                                                {% endif %}
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Fee records pagination">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Payment Actions -->
+            <div class="row mt-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-plus me-2"></i>Record New Payment</h5>
+                        </div>
+                        <div class="card-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="student_select" class="form-label">Select Student</label>
+                                        <select class="form-select" id="student_select">
+                                            <option value="">Choose student...</option>
+                                            <option value="1">Amit Kumar - Python Programming</option>
+                                            <option value="2">Priya Sharma - Web Development</option>
+                                            <option value="3">Rahul Singh - Data Science</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="amount" class="form-label">Amount (₹)</label>
+                                        <input type="number" class="form-control" id="amount" placeholder="Enter amount">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="payment_date" class="form-label">Payment Date</label>
+                                        <input type="date" class="form-control" id="payment_date">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="payment_method" class="form-label">Payment Method</label>
+                                        <select class="form-select" id="payment_method">
+                                            <option value="cash">Cash</option>
+                                            <option value="card">Card</option>
+                                            <option value="upi">UPI</option>
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="remarks" class="form-label">Remarks</label>
+                                    <textarea class="form-control" id="remarks" rows="2" placeholder="Optional remarks"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-2"></i>Record Payment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Payment Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Total Collected:</span>
+                                    <strong class="text-success">₹2,45,000</strong>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Pending:</span>
+                                    <strong class="text-warning">₹45,000</strong>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between">
+                                    <span>Overdue:</span>
+                                    <strong class="text-danger">₹12,000</strong>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Total Expected:</strong></span>
+                                <strong>₹3,02,000</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function recordPayment(receiptNo) {
+    if (confirm('Are you sure you want to record payment for receipt ' + receiptNo + '?')) {
+        // In a real application, this would make an AJAX call to record the payment
+        alert('Payment recorded successfully for receipt ' + receiptNo);
+        location.reload();
+    }
+}
+
+function sendReminder(receiptNo) {
+    if (confirm('Send payment reminder for receipt ' + receiptNo + '?')) {
+        // In a real application, this would send an email/SMS reminder
+        alert('Payment reminder sent for receipt ' + receiptNo);
+    }
+}
+
+function sendNotice(receiptNo) {
+    if (confirm('Send overdue notice for receipt ' + receiptNo + '?')) {
+        // In a real application, this would send an overdue notice
+        alert('Overdue notice sent for receipt ' + receiptNo);
+    }
+}
+
+function editStudent(studentId) {
+    // In a real application, this would open an edit modal or redirect to edit page
+    alert('Edit functionality for student ID: ' + studentId + ' would be implemented here.');
+}
+</script>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+    font-weight: bold;
+}
+</style>
+{% endblock %}

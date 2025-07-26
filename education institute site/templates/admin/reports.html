@@ -1,0 +1,280 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.batches') }}">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('admin.faculty') }}">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('admin.reports') }}">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Reports & Analytics</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download"></i> Export Reports
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Metrics -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h3 class="text-primary">{{ stats.total_students }}</h3>
+                            <p class="text-muted mb-0">Total Students</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-book fa-2x text-success mb-2"></i>
+                            <h3 class="text-success">{{ stats.total_courses }}</h3>
+                            <p class="text-muted mb-0">Active Courses</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-layer-group fa-2x text-info mb-2"></i>
+                            <h3 class="text-info">{{ stats.active_batches }}</h3>
+                            <p class="text-muted mb-0">Active Batches</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-rupee-sign fa-2x text-warning mb-2"></i>
+                            <h3 class="text-warning">₹{{ "%.0f"|format(stats.monthly_revenue) }}</h3>
+                            <p class="text-muted mb-0">Monthly Revenue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts and Analytics -->
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-line me-2"></i>Monthly Enquiries</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center py-4">
+                                <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                                <h4>{{ stats.monthly_enquiries }}</h4>
+                                <p class="text-muted">Enquiries This Month</p>
+                                <small class="text-success">
+                                    <i class="fas fa-arrow-up me-1"></i>
+                                    12% increase from last month
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Revenue Breakdown</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center py-4">
+                                <i class="fas fa-chart-pie fa-3x text-muted mb-3"></i>
+                                <h4>₹{{ "%.2f"|format(stats.monthly_revenue) }}</h4>
+                                <p class="text-muted">Total Revenue This Month</p>
+                                <div class="row mt-3">
+                                    <div class="col-6">
+                                        <small class="text-muted">Course Fees</small><br>
+                                        <strong class="text-primary">85%</strong>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Other</small><br>
+                                        <strong class="text-secondary">15%</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Reports -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-table me-2"></i>Available Reports</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-primary">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                                            <h6>Student Report</h6>
+                                            <p class="text-muted small">Comprehensive student enrollment and performance data</p>
+                                            <button class="btn btn-outline-primary btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-success">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-money-bill-wave fa-2x text-success mb-2"></i>
+                                            <h6>Financial Report</h6>
+                                            <p class="text-muted small">Revenue, fees collection, and financial analytics</p>
+                                            <button class="btn btn-outline-success btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-info">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-graduation-cap fa-2x text-info mb-2"></i>
+                                            <h6>Course Report</h6>
+                                            <p class="text-muted small">Course performance, completion rates, and analytics</p>
+                                            <button class="btn btn-outline-info btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-warning">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-calendar-check fa-2x text-warning mb-2"></i>
+                                            <h6>Attendance Report</h6>
+                                            <p class="text-muted small">Student attendance patterns and statistics</p>
+                                            <button class="btn btn-outline-warning btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-danger">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-chalkboard-teacher fa-2x text-danger mb-2"></i>
+                                            <h6>Faculty Report</h6>
+                                            <p class="text-muted small">Faculty performance and teaching analytics</p>
+                                            <button class="btn btn-outline-danger btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card border-secondary">
+                                        <div class="card-body text-center">
+                                            <i class="fas fa-question-circle fa-2x text-secondary mb-2"></i>
+                                            <h6>Enquiry Report</h6>
+                                            <p class="text-muted small">Lead generation and enquiry conversion analytics</p>
+                                            <button class="btn btn-outline-secondary btn-sm">
+                                                <i class="fas fa-download me-1"></i>Generate
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-clock me-2"></i>Recent Activity Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">This Week</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-user-plus text-success me-2"></i>
+                                            <strong>15</strong> new student enrollments
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-money-bill text-primary me-2"></i>
+                                            <strong>₹45,000</strong> fees collected
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-question-circle text-info me-2"></i>
+                                            <strong>23</strong> new enquiries received
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">This Month</h6>
+                                    <ul class="list-unstyled">
+                                        <li class="mb-2">
+                                            <i class="fas fa-graduation-cap text-warning me-2"></i>
+                                            <strong>8</strong> course completions
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-certificate text-success me-2"></i>
+                                            <strong>12</strong> certificates issued
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-layer-group text-secondary me-2"></i>
+                                            <strong>3</strong> new batches started
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

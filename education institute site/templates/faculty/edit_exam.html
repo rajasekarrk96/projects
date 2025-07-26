@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Exam - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-clipboard-list"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Edit Exam</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('faculty.exams') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Exams
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Exam Form -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-edit me-2"></i>Edit Exam Details - {{ exam_id }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_title" class="form-label">Exam Title <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="exam_title" name="exam_title" value="Web Development - Mid Term" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="course" class="form-label">Course <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="course" name="course" required>
+                                            <option value="python">Python Programming</option>
+                                            <option value="web" selected>Web Development</option>
+                                            <option value="data_science">Data Science</option>
+                                            <option value="java">Java Programming</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_date" class="form-label">Exam Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="exam_date" name="exam_date" value="2024-03-02" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_time" class="form-label">Exam Time <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="exam_time" name="exam_time" value="14:00" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="duration" class="form-label">Duration (minutes) <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="duration" name="duration" value="90" min="30" max="180" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="total_marks" class="form-label">Total Marks <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="total_marks" name="total_marks" value="75" min="10" max="100" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="exam_type" class="form-label">Exam Type <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="exam_type" name="exam_type" required>
+                                            <option value="unit_test">Unit Test</option>
+                                            <option value="mid_term" selected>Mid Term</option>
+                                            <option value="final">Final Exam</option>
+                                            <option value="practical">Practical Exam</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="batch" class="form-label">Batch <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="batch" name="batch" required>
+                                            <option value="morning">Morning Batch (9:00 AM - 12:00 PM)</option>
+                                            <option value="afternoon" selected>Afternoon Batch (1:00 PM - 4:00 PM)</option>
+                                            <option value="evening">Evening Batch (5:00 PM - 8:00 PM)</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="instructions" class="form-label">Exam Instructions</label>
+                                    <textarea class="form-control" id="instructions" name="instructions" rows="4">Please read all questions carefully before attempting. Use proper indentation in code answers. Time limit is strictly enforced.</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="syllabus" class="form-label">Syllabus/Topics Covered</label>
+                                    <textarea class="form-control" id="syllabus" name="syllabus" rows="3">HTML5, CSS3, JavaScript ES6, DOM manipulation, Event handling, AJAX, Bootstrap framework</textarea>
+                                </div>
+
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                    <a href="{{ url_for('faculty.exams') }}" class="btn btn-secondary me-md-2">Cancel</a>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Update Exam
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exam Status & Actions -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Exam Status</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Current Status</label>
+                                <p><span class="badge bg-warning">Upcoming</span></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Students Enrolled</label>
+                                <p class="fw-bold">25 students</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Created On</label>
+                                <p class="fw-bold">25 Feb 2024</p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label text-muted">Last Modified</label>
+                                <p class="fw-bold">26 Feb 2024</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-exclamation-triangle me-2"></i>Important Notes</h5>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-info-circle text-info me-2"></i>
+                                    Changes will be saved immediately
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-bell text-warning me-2"></i>
+                                    Students will be notified of changes
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-clock text-danger me-2"></i>
+                                    Cannot edit once exam has started
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-users text-success me-2"></i>
+                                    25 students are enrolled for this exam
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <h5><i class="fas fa-cogs me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="previewExam()">
+                                    <i class="fas fa-eye me-2"></i>Preview Exam
+                                </button>
+                                <button class="btn btn-outline-info" onclick="notifyStudents()">
+                                    <i class="fas fa-envelope me-2"></i>Notify Students
+                                </button>
+                                <button class="btn btn-outline-success" onclick="duplicateExam()">
+                                    <i class="fas fa-copy me-2"></i>Duplicate Exam
+                                </button>
+                                <button class="btn btn-outline-danger" onclick="deleteExam()">
+                                    <i class="fas fa-trash me-2"></i>Delete Exam
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Set minimum date to today
+document.getElementById('exam_date').min = new Date().toISOString().split('T')[0];
+
+// Auto-fill duration based on exam type
+document.getElementById('exam_type').addEventListener('change', function() {
+    const durationsMap = {
+        'unit_test': 60,
+        'mid_term': 90,
+        'final': 120,
+        'practical': 180
+    };
+    
+    const selectedType = this.value;
+    if (durationsMap[selectedType]) {
+        document.getElementById('duration').value = durationsMap[selectedType];
+    }
+});
+
+// Quick action functions
+function previewExam() {
+    alert('📋 Opening exam preview...\n\nThis would show how the exam appears to students.');
+}
+
+function notifyStudents() {
+    if (confirm('📧 Send notification to all enrolled students about exam changes?')) {
+        alert('✅ Notification sent to 25 students successfully!');
+    }
+}
+
+function duplicateExam() {
+    if (confirm('📋 Create a duplicate of this exam?')) {
+        alert('✅ Exam duplicated successfully! You can now modify the copy.');
+    }
+}
+
+function deleteExam() {
+    if (confirm('🗑️ Are you sure you want to delete this exam?\n\nThis action cannot be undone and will affect 25 enrolled students.')) {
+        if (confirm('⚠️ Final confirmation: Delete exam {{ exam_id }}?')) {
+            alert('🗑️ Exam deleted successfully!');
+            window.location.href = '{{ url_for("faculty.exams") }}';
+        }
+    }
+}
+
+// Form validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    if (confirm('💾 Save changes to this exam?\n\nStudents will be notified of any changes.')) {
+        alert('✅ Exam updated successfully!\n\n📧 Notifications sent to enrolled students.');
+        // In real implementation, submit the form
+        // this.submit();
+    }
+});
+</script>
+{% endblock %}

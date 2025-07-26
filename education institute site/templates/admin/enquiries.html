@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+
+{% block title %}Enquiry Management - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/courses">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/batches">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/faculty">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/enquiries">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reports">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="fas fa-question-circle me-2"></i>Enquiry Management</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-filter me-1"></i>Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card border-warning">
+                        <div class="card-body text-center">
+                            <h4 class="text-warning">{{ enquiries|length if enquiries else 0 }}</h4>
+                            <small class="text-muted">Total Enquiries</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-danger">
+                        <div class="card-body text-center">
+                            <h4 class="text-danger">8</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h4 class="text-success">12</h4>
+                            <small class="text-muted">Converted</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <h4 class="text-info">5</h4>
+                            <small class="text-muted">This Week</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enquiries Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list me-2"></i>All Enquiries</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-hover">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Course Interest</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if enquiries %}
+                                    {% for enquiry in enquiries %}
+                                    <tr>
+                                        <td>{{ enquiry.id }}</td>
+                                        <td>{{ enquiry.name }}</td>
+                                        <td>{{ enquiry.email }}</td>
+                                        <td>{{ enquiry.phone }}</td>
+                                        <td>{{ enquiry.course_interest }}</td>
+                                        <td>{{ enquiry.created_at.strftime('%Y-%m-%d') if enquiry.created_at else 'N/A' }}</td>
+                                        <td>
+                                            {% if enquiry.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif enquiry.status == 'contacted' %}
+                                                <span class="badge bg-info">Contacted</span>
+                                            {% elif enquiry.status == 'converted' %}
+                                                <span class="badge bg-success">Converted</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ enquiry.status|title }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-primary" onclick="viewEnquiry({{ enquiry.id }})">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success" onclick="contactEnquiry({{ enquiry.id }})">
+                                                    <i class="fas fa-phone"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info" onclick="convertEnquiry({{ enquiry.id }})">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <!-- Sample data when no enquiries exist -->
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Amit Kumar</td>
+                                        <td>amit.kumar@email.com</td>
+                                        <td>+91 9876543210</td>
+                                        <td>Data Science</td>
+                                        <td>2024-01-15</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-primary" onclick="viewEnquiry(1)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success" onclick="contactEnquiry(1)">
+                                                    <i class="fas fa-phone"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info" onclick="convertEnquiry(1)">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Priya Sharma</td>
+                                        <td>priya.sharma@email.com</td>
+                                        <td>+91 9876543211</td>
+                                        <td>Web Development</td>
+                                        <td>2024-01-14</td>
+                                        <td><span class="badge bg-info">Contacted</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-primary" onclick="viewEnquiry(2)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success" onclick="contactEnquiry(2)">
+                                                    <i class="fas fa-phone"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info" onclick="convertEnquiry(2)">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>Rahul Singh</td>
+                                        <td>rahul.singh@email.com</td>
+                                        <td>+91 9876543212</td>
+                                        <td>Mobile App Development</td>
+                                        <td>2024-01-13</td>
+                                        <td><span class="badge bg-success">Converted</span></td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button type="button" class="btn btn-outline-primary" onclick="viewEnquiry(3)">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-success" onclick="contactEnquiry(3)">
+                                                    <i class="fas fa-phone"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-outline-info" onclick="convertEnquiry(3)">
+                                                    <i class="fas fa-user-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Enquiry Details Modal -->
+<div class="modal fade" id="enquiryModal" tabindex="-1" aria-labelledby="enquiryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="enquiryModalLabel">Enquiry Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="enquiryModalBody">
+                <!-- Enquiry details will be loaded here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Update Status</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function viewEnquiry(enquiryId) {
+        // Show enquiry details in modal
+        document.getElementById('enquiryModalBody').innerHTML = `
+            <div class="row">
+                <div class="col-md-6">
+                    <h6>Personal Information</h6>
+                    <p><strong>Name:</strong> Sample Name</p>
+                    <p><strong>Email:</strong> sample@email.com</p>
+                    <p><strong>Phone:</strong> +91 9876543210</p>
+                </div>
+                <div class="col-md-6">
+                    <h6>Enquiry Details</h6>
+                    <p><strong>Course Interest:</strong> Data Science</p>
+                    <p><strong>Date:</strong> 2024-01-15</p>
+                    <p><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <h6>Message</h6>
+                    <p>I am interested in learning more about your Data Science course. Please provide more details about the curriculum and fees.</p>
+                </div>
+            </div>
+        `;
+        
+        const modal = new bootstrap.Modal(document.getElementById('enquiryModal'));
+        modal.show();
+    }
+
+    function contactEnquiry(enquiryId) {
+        if (confirm('Mark this enquiry as contacted?')) {
+            // In real implementation, make AJAX call to update status
+            alert('Enquiry marked as contacted!');
+            location.reload();
+        }
+    }
+
+    function convertEnquiry(enquiryId) {
+        if (confirm('Convert this enquiry to admission?')) {
+            // In real implementation, redirect to admission form or make AJAX call
+            alert('Redirecting to admission form...');
+        }
+    }
+
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+</script>
+{% endblock %}

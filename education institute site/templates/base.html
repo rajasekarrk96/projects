@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Edusphere Institute Management System{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1e40af;
+            --primary-dark: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --accent-color: #06b6d4;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+        
+        body {
+            background-color: var(--gray-50);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+        
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 2px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+        }
+        
+        .main-content {
+            padding: 20px;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            border: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .stats-card p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .table {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .table thead th {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+        }
+        
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 12px;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+        
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .feature-card i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .enterprise-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .enterprise-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+        
+        .enterprise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .testimonial-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary-color);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+        
+        .stars {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .pricing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--primary-color);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        .popular-badge {
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 0 0 15px 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .pricing-header {
+            text-align: center;
+            padding: 2rem 1.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .pricing-card.featured .pricing-header {
+            padding-top: 3rem;
+        }
+        
+        .price {
+            margin: 1rem 0;
+        }
+        
+        .price .currency {
+            font-size: 1.2rem;
+            vertical-align: top;
+            color: var(--text-muted);
+        }
+        
+        .price .amount {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .price .period {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+        
+        .pricing-body {
+            padding: 2rem 1.5rem;
+        }
+        
+        .pricing-footer {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-graduation-cap me-2"></i>
+                Edusphere Institute
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>
+                                {{ current_user.name }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/dashboard">Dashboard</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('public.login') }}">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('public.enquiry') }}">Enquiry</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Main Content -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p>&copy; 2024 Edusphere Institute Management System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html> 

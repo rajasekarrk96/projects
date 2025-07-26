@@ -1,0 +1,631 @@
+{% extends "base.html" %}
+
+{% block title %}Enterprise Institute Management System - Edusphere{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-gradient {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .hero-gradient::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff" fill-opacity="0.05" points="0,1000 1000,0 1000,1000"/></svg>') no-repeat center center;
+        background-size: cover;
+    }
+    
+    .enterprise-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: var(--shadow-xl);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .enterprise-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transition: left 0.5s;
+    }
+    
+    .enterprise-card:hover::before {
+        left: 100%;
+    }
+    
+    .enterprise-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow-xl), 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .stats-counter {
+        font-size: 3.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        box-shadow: var(--shadow-lg);
+    }
+    
+    .feature-icon i {
+        font-size: 2rem;
+        color: white;
+    }
+    
+    .testimonial-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: var(--shadow-md);
+        border-left: 4px solid var(--primary-color);
+    }
+    
+    .pricing-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: var(--shadow-lg);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .pricing-card.featured {
+        transform: scale(1.05);
+        border: 2px solid var(--primary-color);
+    }
+    
+    .pricing-card.featured::before {
+        content: 'Most Popular';
+        position: absolute;
+        top: 20px;
+        right: -30px;
+        background: var(--primary-color);
+        color: white;
+        padding: 5px 40px;
+        transform: rotate(45deg);
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .btn-enterprise {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        box-shadow: var(--shadow-md);
+    }
+    
+    .btn-enterprise:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-xl);
+        color: white;
+    }
+    
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(90deg, transparent, var(--gray-300), transparent);
+        margin: 4rem 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-gradient text-white py-5" style="min-height: 100vh; display: flex; align-items: center;">
+    <div class="container position-relative">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="mb-4">
+                    <span class="badge bg-light text-primary px-3 py-2 rounded-pill mb-3">
+                        <i class="fas fa-award me-2"></i>Enterprise-Grade Solution
+                    </span>
+                </div>
+                <h1 class="display-3 fw-bold mb-4">
+                    Transform Your
+                    <span class="text-warning">Institute Management</span>
+                </h1>
+                <p class="lead mb-4 fs-4">
+                    Complete digital transformation solution for educational institutions. 
+                    Streamline admissions, manage students, track performance, and boost efficiency with our enterprise-ready platform.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-5">
+                    <a href="{{ url_for('public.enquiry') }}" class="btn btn-enterprise btn-lg">
+                        <i class="fas fa-rocket me-2"></i>Request Demo
+                    </a>
+                    <a href="{{ url_for('public.login') }}" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-sign-in-alt me-2"></i>Admin Login
+                    </a>
+                </div>
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="stats-counter">500+</div>
+                        <small class="text-light">Institutes</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="stats-counter">50K+</div>
+                        <small class="text-light">Students</small>
+                    </div>
+                    <div class="col-4">
+                        <div class="stats-counter">99.9%</div>
+                        <small class="text-light">Uptime</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <div class="enterprise-card p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-success rounded-circle" style="width: 12px; height: 12px;"></div>
+                            <span class="ms-2 fw-semibold">Live Dashboard</span>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="bg-primary bg-opacity-10 p-3 rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-users text-primary me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">1,247</div>
+                                            <small class="text-muted">Active Students</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-success bg-opacity-10 p-3 rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-chart-line text-success me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">₹2.4L</div>
+                                            <small class="text-muted">Monthly Revenue</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-warning bg-opacity-10 p-3 rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-graduation-cap text-warning me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">89</div>
+                                            <small class="text-muted">Courses</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="bg-info bg-opacity-10 p-3 rounded">
+                                    <div class="d-flex align-items-center">
+                                        <i class="fas fa-chalkboard-teacher text-info me-2"></i>
+                                        <div>
+                                            <div class="fw-bold">45</div>
+                                            <small class="text-muted">Faculty</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Enterprise Features Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <span class="badge bg-primary text-white px-3 py-2 rounded-pill mb-3">
+                    <i class="fas fa-building me-2"></i>Enterprise Features
+                </span>
+                <h2 class="display-4 mb-3">Complete Digital Transformation</h2>
+                <p class="lead text-muted">Everything your educational institution needs to operate efficiently and scale successfully</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Student Management</h4>
+                    <p class="text-muted mb-4">Complete student lifecycle management from enquiry to graduation with automated workflows.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Automated Admissions</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Progress Tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Digital Certificates</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-analytics"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Analytics & Reporting</h4>
+                    <p class="text-muted mb-4">Real-time insights and comprehensive reports to make data-driven decisions.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Revenue Analytics</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Performance Metrics</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Custom Dashboards</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Security & Compliance</h4>
+                    <p class="text-muted mb-4">Enterprise-grade security with role-based access and data protection.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Role-Based Access</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Data Encryption</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Audit Trails</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Financial Management</h4>
+                    <p class="text-muted mb-4">Comprehensive fee management with automated billing and payment tracking.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Automated Invoicing</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Payment Gateway Integration</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Financial Reports</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Faculty Management</h4>
+                    <p class="text-muted mb-4">Complete faculty lifecycle management with performance tracking and payroll.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Attendance Tracking</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Performance Analytics</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Automated Payroll</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="enterprise-card p-4 h-100">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">Mobile Ready</h4>
+                    <p class="text-muted mb-4">Fully responsive design with mobile apps for students and faculty on-the-go.</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Responsive Design</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Mobile Apps</li>
+                        <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Offline Capability</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <span class="badge bg-success text-white px-3 py-2 rounded-pill mb-3">
+                    <i class="fas fa-star me-2"></i>Client Success Stories
+                </span>
+                <h2 class="display-4 mb-3">Trusted by Leading Institutions</h2>
+                <p class="lead text-muted">See how organizations worldwide are transforming their operations with our platform</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="stars mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="mb-4">"Edusphere transformed our institute operations completely. Student management is now seamless, and our administrative efficiency has increased by 300%."</p>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar me-3">
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Dr. Sarah Johnson</h6>
+                            <small class="text-muted">Director, TechSkills Academy</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="stars mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="mb-4">"The analytics and reporting features give us insights we never had before. ROI tracking and performance metrics are game-changers for our business."</p>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar me-3">
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Michael Chen</h6>
+                            <small class="text-muted">CEO, Digital Learning Hub</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="testimonial-card p-4 h-100">
+                    <div class="stars mb-3">
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                        <i class="fas fa-star text-warning"></i>
+                    </div>
+                    <p class="mb-4">"Implementation was smooth and the support team is exceptional. Our faculty and students adapted quickly to the new system."</p>
+                    <div class="d-flex align-items-center">
+                        <div class="avatar me-3">
+                            <i class="fas fa-user-circle fa-3x text-primary"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">Priya Sharma</h6>
+                            <small class="text-muted">Principal, Innovation Institute</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Courses Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <span class="badge bg-info text-white px-3 py-2 rounded-pill mb-3">
+                    <i class="fas fa-graduation-cap me-2"></i>Course Catalog
+                </span>
+                <h2 class="display-4 mb-3">Professional Training Programs</h2>
+                <p class="lead text-muted">Industry-aligned courses designed for career advancement</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-code fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Web Development</h5>
+                        <p class="card-text">Full-stack web development with modern frameworks and technologies.</p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>HTML, CSS, JavaScript</li>
+                            <li><i class="fas fa-check text-success me-2"></i>React.js & Node.js</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Database Management</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-mobile-alt fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Mobile Development</h5>
+                        <p class="card-text">Cross-platform mobile app development for iOS and Android.</p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>React Native</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Flutter</li>
+                            <li><i class="fas fa-check text-success me-2"></i>App Store Deployment</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="fas fa-robot fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Data Science</h5>
+                        <p class="card-text">Machine learning and data analysis with Python and R.</p>
+                        <ul class="list-unstyled text-start">
+                            <li><i class="fas fa-check text-success me-2"></i>Python Programming</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Machine Learning</li>
+                            <li><i class="fas fa-check text-success me-2"></i>Data Visualization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-12">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-3">
+                    <i class="fas fa-tags me-2"></i>Flexible Pricing
+                </span>
+                <h2 class="display-4 mb-3">Choose Your Plan</h2>
+                <p class="lead text-muted">Scalable solutions for institutions of all sizes</p>
+            </div>
+        </div>
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card h-100">
+                    <div class="pricing-header">
+                        <h4 class="fw-bold">Starter</h4>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">299</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="text-muted">Perfect for small institutes</p>
+                    </div>
+                    <div class="pricing-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Up to 100 students</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>5 faculty members</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Basic reporting</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Email support</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Mobile access</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <button class="btn btn-outline-primary w-100">Get Started</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card featured h-100">
+                    <div class="popular-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h4 class="fw-bold">Professional</h4>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">599</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="text-muted">Ideal for growing institutions</p>
+                    </div>
+                    <div class="pricing-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Up to 500 students</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>20 faculty members</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Advanced analytics</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Priority support</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Custom branding</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>API access</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <button class="btn btn-primary w-100">Start Free Trial</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="pricing-card h-100">
+                    <div class="pricing-header">
+                        <h4 class="fw-bold">Enterprise</h4>
+                        <div class="price">
+                            <span class="currency">$</span>
+                            <span class="amount">999</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="text-muted">For large organizations</p>
+                    </div>
+                    <div class="pricing-body">
+                        <ul class="list-unstyled">
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Unlimited students</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Unlimited faculty</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>White-label solution</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>24/7 dedicated support</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>Custom integrations</li>
+                            <li class="mb-3"><i class="fas fa-check text-success me-2"></i>On-premise deployment</li>
+                        </ul>
+                    </div>
+                    <div class="pricing-footer">
+                        <button class="btn btn-outline-primary w-100">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <p class="text-muted mb-4">All plans include free setup, training, and data migration</p>
+                <div class="d-flex justify-content-center gap-4 flex-wrap">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt text-success me-2"></i>
+                        <span>99.9% Uptime SLA</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-lock text-success me-2"></i>
+                        <span>Bank-grade Security</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-headset text-success me-2"></i>
+                        <span>24/7 Support</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call to Action -->
+<section class="py-5 bg-primary text-white">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col-12">
+                <h2 class="display-4 mb-3">Transform Your Institution Today</h2>
+                <p class="lead mb-4">Join hundreds of successful educational institutions that have digitized their operations with Edusphere.</p>
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="{{ url_for('public.login') }}" class="btn btn-light btn-lg px-4 py-3">
+                        <i class="fas fa-rocket me-2"></i>Start Free Trial
+                    </a>
+                    <a href="{{ url_for('public.enquiry') }}" class="btn btn-outline-light btn-lg px-4 py-3">
+                        <i class="fas fa-calendar me-2"></i>Schedule Demo
+                    </a>
+                </div>
+                <p class="mt-4 mb-0"><small>No credit card required • 30-day free trial • Setup in 24 hours</small></p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

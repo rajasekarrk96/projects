@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Management - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('faculty.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('faculty.exams') }}">
+                            <i class="fas fa-clipboard-list"></i>Exams
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Exam Management</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('faculty.add_exam') }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Schedule New Exam
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">12</h4>
+                                    <p class="card-text">Total Exams</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clipboard-list fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">8</h4>
+                                    <p class="card-text">Completed</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-check-circle fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">3</h4>
+                                    <p class="card-text">Upcoming</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-clock fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h4 class="card-title">1</h4>
+                                    <p class="card-text">In Progress</p>
+                                </div>
+                                <div class="align-self-center">
+                                    <i class="fas fa-hourglass-half fa-2x"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter and Search -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search by exam title, course, or type..." id="searchInput" list="examSuggestions">
+                        <datalist id="examSuggestions">
+                            <option value="Python Programming - Unit Test 1">
+                            <option value="Web Development - Mid Term">
+                            <option value="Data Science - Practical Exam">
+                            <option value="Java Programming - Final Exam">
+                            <option value="Unit Test">
+                            <option value="Mid Term">
+                            <option value="Practical">
+                            <option value="Final">
+                        </datalist>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="completed">Completed</option>
+                        <option value="in_progress">In Progress</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="courseFilter">
+                        <option value="">All Courses</option>
+                        <option value="python">Python Programming</option>
+                        <option value="web">Web Development</option>
+                        <option value="data_science">Data Science</option>
+                        <option value="java">Java Programming</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Exams Table -->
+            <div class="card">
+                <div class="card-header">
+                    <h5><i class="fas fa-list me-2"></i>Scheduled Exams</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Exam Title</th>
+                                    <th>Course</th>
+                                    <th>Date & Time</th>
+                                    <th>Duration</th>
+                                    <th>Total Marks</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Python Programming - Unit Test 1</strong>
+                                        <br><small class="text-muted">Unit Test</small>
+                                    </td>
+                                    <td><span class="badge bg-primary">Python Programming</span></td>
+                                    <td>
+                                        <strong>28 Feb 2024</strong>
+                                        <br><small class="text-muted">10:00 AM</small>
+                                    </td>
+                                    <td>60 mins</td>
+                                    <td>50</td>
+                                    <td><span class="badge bg-success">Completed</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary" title="View Results" onclick="viewExamResults('exam1')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-info" title="Download Report" onclick="downloadReport('exam1')">
+                                                <i class="fas fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Web Development - Mid Term</strong>
+                                        <br><small class="text-muted">Mid Term</small>
+                                    </td>
+                                    <td><span class="badge bg-info">Web Development</span></td>
+                                    <td>
+                                        <strong>02 Mar 2024</strong>
+                                        <br><small class="text-muted">2:00 PM</small>
+                                    </td>
+                                    <td>90 mins</td>
+                                    <td>75</td>
+                                    <td><span class="badge bg-warning">Upcoming</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-warning" title="Edit" onclick="editExam('exam2')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-success" title="Start Exam" onclick="startExam('exam2')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" title="Cancel" onclick="cancelExam('exam2')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Data Science - Practical Exam</strong>
+                                        <br><small class="text-muted">Practical</small>
+                                    </td>
+                                    <td><span class="badge bg-secondary">Data Science</span></td>
+                                    <td>
+                                        <strong>05 Mar 2024</strong>
+                                        <br><small class="text-muted">9:00 AM</small>
+                                    </td>
+                                    <td>180 mins</td>
+                                    <td>100</td>
+                                    <td><span class="badge bg-info clickable-status" style="cursor: pointer;" title="Click to view details" onclick="showExamDetails('exam3')">In Progress</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-primary" title="Monitor" onclick="monitorExam('exam3')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" title="End Exam" onclick="endExam('exam3')">
+                                                <i class="fas fa-stop"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Java Programming - Final Exam</strong>
+                                        <br><small class="text-muted">Final</small>
+                                    </td>
+                                    <td><span class="badge bg-success">Java Programming</span></td>
+                                    <td>
+                                        <strong>08 Mar 2024</strong>
+                                        <br><small class="text-muted">11:00 AM</small>
+                                    </td>
+                                    <td>120 mins</td>
+                                    <td>100</td>
+                                    <td><span class="badge bg-warning">Upcoming</span></td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button type="button" class="btn btn-outline-warning" title="Edit" onclick="editExam('exam4')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-success" title="Start Exam" onclick="startExam('exam4')">
+                                                <i class="fas fa-play"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" title="Cancel" onclick="cancelExam('exam4')">
+                                                <i class="fas fa-times"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <a href="{{ url_for('faculty.add_exam') }}" class="btn btn-primary w-100">
+                                        <i class="fas fa-plus me-2"></i>Schedule New Exam
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-info w-100" onclick="viewAnalytics()">
+                                        <i class="fas fa-chart-bar me-2"></i>View Analytics
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-success w-100" onclick="exportResults()">
+                                        <i class="fas fa-download me-2"></i>Export Results
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button class="btn btn-outline-warning w-100" onclick="examSettings()">
+                                        <i class="fas fa-cog me-2"></i>Exam Settings
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced search functionality with datalist-style filtering
+document.getElementById('searchInput').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    tableRows.forEach(row => {
+        const examTitle = row.querySelector('strong').textContent.toLowerCase();
+        const courseText = row.querySelector('.badge').textContent.toLowerCase();
+        const examType = row.querySelector('small').textContent.toLowerCase();
+        
+        const matchesSearch = examTitle.includes(searchTerm) || 
+                             courseText.includes(searchTerm) || 
+                             examType.includes(searchTerm);
+        
+        row.style.display = matchesSearch ? '' : 'none';
+    });
+});
+
+// Filter functionality
+document.getElementById('statusFilter').addEventListener('change', function() {
+    filterTable();
+});
+
+document.getElementById('courseFilter').addEventListener('change', function() {
+    filterTable();
+});
+
+function filterTable() {
+    const statusFilter = document.getElementById('statusFilter').value.toLowerCase();
+    const courseFilter = document.getElementById('courseFilter').value.toLowerCase();
+    const tableRows = document.querySelectorAll('tbody tr');
+    
+    tableRows.forEach(row => {
+        const statusBadge = row.querySelector('.badge:last-of-type').textContent.toLowerCase();
+        const courseBadge = row.querySelector('.badge:first-of-type').textContent.toLowerCase();
+        
+        const statusMatch = !statusFilter || statusBadge.includes(statusFilter);
+        const courseMatch = !courseFilter || courseBadge.includes(courseFilter);
+        
+        row.style.display = statusMatch && courseMatch ? '' : 'none';
+    });
+}
+
+// Action button functions
+function viewExamResults(examId) {
+    // Open exam results in new tab
+    window.open('/faculty/exam/' + examId + '/results', '_blank');
+}
+
+function downloadReport(examId) {
+    // Redirect to download report
+    window.location.href = '/faculty/exam/' + examId + '/download-report';
+}
+
+function editExam(examId) {
+    if (confirm('Edit exam: ' + examId + '?\n\nThis will open the exam editor.')) {
+        // Redirect to edit exam page
+        window.location.href = '/faculty/exam/' + examId + '/edit';
+    }
+}
+
+function startExam(examId) {
+    if (confirm('Start exam: ' + examId + '?\n\nThis will make the exam available to students.')) {
+        // Make AJAX call to start exam
+        fetch('/faculty/exam/' + examId + '/start', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('✅ ' + data.message);
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Failed to start exam. Please try again.');
+        });
+    }
+}
+
+function cancelExam(examId) {
+    if (confirm('Cancel exam: ' + examId + '?\n\nThis action cannot be undone.')) {
+        // Make AJAX call to cancel exam
+        fetch('/faculty/exam/' + examId + '/cancel', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('⚠️ ' + data.message);
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Failed to cancel exam. Please try again.');
+        });
+    }
+}
+
+function monitorExam(examId) {
+    showExamDetails(examId);
+}
+
+function endExam(examId) {
+    if (confirm('End exam: ' + examId + '?\n\nThis will stop the exam for all students.')) {
+        // Make AJAX call to end exam
+        fetch('/faculty/exam/' + examId + '/end', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('🛑 ' + data.message);
+                location.reload();
+            } else {
+                alert('❌ Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('❌ Failed to end exam. Please try again.');
+        });
+    }
+}
+
+// Quick action functions
+function viewAnalytics() {
+    alert('This would show comprehensive exam analytics and performance metrics.');
+}
+
+function exportResults() {
+    alert('This would export all exam results to Excel/PDF format.');
+}
+
+function examSettings() {
+    alert('This would open exam configuration and settings panel.');
+}
+
+// Show detailed exam information modal
+function showExamDetails(examId) {
+    // Show loading modal first
+    showLoadingModal();
+    
+    // Fetch real exam details from backend
+    fetch('/faculty/exam/' + examId + '/details')
+        .then(response => response.json())
+        .then(data => {
+            // Remove loading modal
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal) {
+                loadingModal.remove();
+            }
+            
+            // Generate student progress rows
+            const studentProgressRows = data.student_progress.map(student => `
+                <tr>
+                    <td>${student.name}</td>
+                    <td><span class="badge ${student.status === 'Active' ? 'bg-success' : 'bg-info'}">${student.status}</span></td>
+                    <td><div class="progress" style="width: 100px;"><div class="progress-bar ${student.progress === 100 ? 'bg-success' : ''}" style="width: ${student.progress}%">${student.progress}%</div></div></td>
+                    <td>${student.time_used} min</td>
+                </tr>
+            `).join('');
+            
+            // Create modal with real data
+            const modalHtml = `
+                <div class="modal fade" id="examDetailsModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title"><i class="fas fa-clipboard-list me-2"></i>Exam Details - ${data.exam_id}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">Exam Information</h6>
+                                        <table class="table table-borderless">
+                                            <tr><td><strong>Exam ID:</strong></td><td>${data.exam_id}</td></tr>
+                                            <tr><td><strong>Title:</strong></td><td>${data.title}</td></tr>
+                                            <tr><td><strong>Course:</strong></td><td>${data.course}</td></tr>
+                                            <tr><td><strong>Type:</strong></td><td>${data.type}</td></tr>
+                                            <tr><td><strong>Duration:</strong></td><td>${data.duration} minutes</td></tr>
+                                            <tr><td><strong>Total Marks:</strong></td><td>${data.total_marks}</td></tr>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="text-muted">Live Statistics</h6>
+                                        <table class="table table-borderless">
+                                            <tr><td><strong>Students Enrolled:</strong></td><td>${data.students_enrolled}</td></tr>
+                                            <tr><td><strong>Currently Active:</strong></td><td>${data.currently_active}</td></tr>
+                                            <tr><td><strong>Submitted:</strong></td><td>${data.submitted}</td></tr>
+                                            <tr><td><strong>Time Remaining:</strong></td><td>${data.time_remaining} minutes</td></tr>
+                                            <tr><td><strong>Started At:</strong></td><td>${data.started_at}</td></tr>
+                                            <tr><td><strong>Will End At:</strong></td><td>${data.will_end_at}</td></tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                <hr>
+                                <h6 class="text-muted">Student Progress</h6>
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Student</th>
+                                                <th>Status</th>
+                                                <th>Progress</th>
+                                                <th>Time Used</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${studentProgressRows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-danger" onclick="endExam('${data.exam_id}')">
+                                    <i class="fas fa-stop me-2"></i>End Exam
+                                </button>
+                                <button type="button" class="btn btn-outline-info" onclick="downloadReport('${data.exam_id}')">
+                                    <i class="fas fa-download me-2"></i>Download Report
+                                </button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('examDetailsModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+            
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+            
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('examDetailsModal'));
+            modal.show();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Remove loading modal
+            const loadingModal = document.getElementById('loadingModal');
+            if (loadingModal) {
+                loadingModal.remove();
+            }
+            alert('❌ Failed to load exam details. Please try again.');
+        });
+}
+
+// Show loading modal
+function showLoadingModal() {
+    const loadingHtml = `
+        <div class="modal fade" id="loadingModal" tabindex="-1">
+            <div class="modal-dialog modal-sm">
+                <div class="modal-content">
+                    <div class="modal-body text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading exam details...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', loadingHtml);
+    const modal = new bootstrap.Modal(document.getElementById('loadingModal'));
+    modal.show();
+}
+</script>
+{% endblock %}

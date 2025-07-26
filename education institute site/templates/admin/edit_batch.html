@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Batch - {{ batch.name }} - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/courses">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/batches">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/faculty">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/enquiries">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reports">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2"><i class="fas fa-edit me-2"></i>Edit Batch - {{ batch.name }}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="/admin/batches/{{ batch.id }}/view" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-eye me-1"></i>View Batch
+                        </a>
+                        <a href="/admin/batches" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Batches
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Batch Form -->
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-edit me-2"></i>Batch Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" id="editBatchForm">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="name" class="form-label">Batch Name <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="name" name="name" value="{{ batch.name }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="course_id" class="form-label">Course <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="course_id" name="course_id" required>
+                                            <option value="">Select Course</option>
+                                            {% for course in courses %}
+                                                <option value="{{ course.id }}" {% if course.id == batch.course_id %}selected{% endif %}>
+                                                    {{ course.name }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" 
+                                               value="{{ batch.start_date.strftime('%Y-%m-%d') if batch.start_date else '' }}" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="end_date" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" 
+                                               value="{{ batch.end_date.strftime('%Y-%m-%d') if batch.end_date else '' }}">
+                                        <div class="form-text">Leave empty for ongoing batches</div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="timing" class="form-label">Timing</label>
+                                        <input type="text" class="form-control" id="timing" name="timing" 
+                                               value="{{ batch.timing or '' }}" placeholder="e.g., 10:00 AM - 12:00 PM">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label for="max_students" class="form-label">Maximum Students <span class="text-danger">*</span></label>
+                                        <input type="number" class="form-control" id="max_students" name="max_students" 
+                                               value="{{ batch.max_students }}" min="1" max="100" required>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                                                   {% if batch.is_active %}checked{% endif %}>
+                                            <label class="form-check-label" for="is_active">
+                                                Active Batch
+                                            </label>
+                                            <div class="form-text">Inactive batches won't accept new enrollments</div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <div>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i>Update Batch
+                                        </button>
+                                        <a href="/admin/batches" class="btn btn-secondary ms-2">
+                                            <i class="fas fa-times me-2"></i>Cancel
+                                        </a>
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger" onclick="confirmDelete()">
+                                        <i class="fas fa-trash me-2"></i>Delete Batch
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- Batch Statistics -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h6><i class="fas fa-chart-bar me-2"></i>Current Statistics</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <h4 class="text-primary">{{ batch.id }}</h4>
+                                <small class="text-muted">Batch ID</small>
+                            </div>
+                            <div class="text-center mb-3">
+                                <h4 class="text-success">5</h4>
+                                <small class="text-muted">Enrolled Students</small>
+                            </div>
+                            <div class="text-center">
+                                <h4 class="text-info">{{ batch.max_students - 5 }}</h4>
+                                <small class="text-muted">Available Slots</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="/admin/batches/{{ batch.id }}/view" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-eye me-2"></i>View Details
+                                </a>
+                                <button type="button" class="btn btn-outline-info btn-sm" onclick="viewStudents()">
+                                    <i class="fas fa-users me-2"></i>Manage Students
+                                </button>
+                                <button type="button" class="btn btn-outline-warning btn-sm" onclick="viewSchedule()">
+                                    <i class="fas fa-calendar me-2"></i>View Schedule
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function confirmDelete() {
+    if (confirm(`Are you sure you want to delete batch "{{ batch.name }}"?\n\nThis action cannot be undone and will remove all associated data.`)) {
+        // Make AJAX request to delete batch
+        fetch(`/admin/batches/{{ batch.id }}/delete`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Batch deleted successfully!');
+                window.location.href = '/admin/batches';
+            } else {
+                alert(`Error: ${data.message}`);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deleting the batch.');
+        });
+    }
+}
+
+function viewStudents() {
+    alert('Student management feature coming soon!');
+    // In real implementation: window.location.href = `/admin/batches/{{ batch.id }}/students`;
+}
+
+function viewSchedule() {
+    alert('Schedule management feature coming soon!');
+    // In real implementation: window.location.href = `/admin/batches/{{ batch.id }}/schedule`;
+}
+
+// Form validation
+document.getElementById('editBatchForm').addEventListener('submit', function(e) {
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    
+    if (endDate && startDate && new Date(endDate) <= new Date(startDate)) {
+        e.preventDefault();
+        alert('End date must be after start date.');
+        return false;
+    }
+});
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}

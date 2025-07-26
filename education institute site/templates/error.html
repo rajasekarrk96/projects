@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}{{ error_title or 'Error' }} - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h4><i class="fas fa-exclamation-triangle me-2"></i>{{ error_title or 'Error' }}</h4>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-4">
+                        <i class="fas fa-exclamation-circle fa-4x text-danger mb-3"></i>
+                        <h5>{{ error_message or 'An unexpected error occurred.' }}</h5>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{{ back_url or url_for('public.index') }}" class="btn btn-primary">
+                            <i class="fas fa-home me-2"></i>Go to Home
+                        </a>
+                        <a href="{{ url_for('public.login') }}" class="btn btn-secondary ms-2">
+                            <i class="fas fa-sign-in-alt me-2"></i>Login
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

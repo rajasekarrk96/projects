@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Staff Dashboard - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('staff.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.enquiries') }}">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.admissions') }}">
+                            <i class="fas fa-user-plus"></i>Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.fees') }}">
+                            <i class="fas fa-money-bill-wave"></i>Fee Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Staff Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="text-muted">Welcome, {{ current_user.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-xl-6 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ pending_enquiries }}</h3>
+                                <p>Pending Enquiries</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-question-circle fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-6 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ today_admissions }}</h3>
+                                <p>Today's Admissions</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-user-plus fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('staff.enquiries') }}" class="btn btn-primary w-100">
+                                        <i class="fas fa-list me-2"></i>View Enquiries
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('staff.admissions') }}" class="btn btn-success w-100">
+                                        <i class="fas fa-user-plus me-2"></i>Manage Admissions
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('staff.fees') }}" class="btn btn-info w-100">
+                                        <i class="fas fa-money-bill me-2"></i>Manage Fees
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('staff.admissions') }}" class="btn btn-warning w-100">
+                                        <i class="fas fa-users me-2"></i>All Students
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bell me-2"></i>Priority Tasks</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if pending_enquiries > 0 %}
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong>{{ pending_enquiries }} enquiries</strong> need your attention
+                                </div>
+                            {% else %}
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    All enquiries have been processed
+                                </div>
+                            {% endif %}
+                            
+                            <div class="mt-3">
+                                <a href="{{ url_for('staff.enquiries') }}" class="btn btn-outline-primary btn-sm">
+                                    Process Enquiries
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-calendar me-2"></i>Today's Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-6">
+                                    <h4 class="text-primary">{{ today_admissions }}</h4>
+                                    <small class="text-muted">New Admissions</small>
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="text-success">{{ pending_enquiries }}</h4>
+                                    <small class="text-muted">Pending Tasks</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Guide -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Workflow Guide</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <i class="fas fa-question-circle fa-2x text-primary mb-2"></i>
+                                        <h6>1. Receive Enquiry</h6>
+                                        <small class="text-muted">New enquiries appear in the enquiries section</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <i class="fas fa-phone fa-2x text-success mb-2"></i>
+                                        <h6>2. Follow Up</h6>
+                                        <small class="text-muted">Contact the prospect and update status</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="text-center">
+                                        <i class="fas fa-user-plus fa-2x text-info mb-2"></i>
+                                        <h6>3. Process Admission</h6>
+                                        <small class="text-muted">Create student account and record fees</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

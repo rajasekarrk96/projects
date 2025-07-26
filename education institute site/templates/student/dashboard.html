@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/student/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/courses">
+                            <i class="fas fa-book"></i>My Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/completed-courses">
+                            <i class="fas fa-graduation-cap"></i>Completed Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/certificates">
+                            <i class="fas fa-certificate"></i>Certificates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/results">
+                            <i class="fas fa-chart-line"></i>Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/attendance">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/student/fees">
+                            <i class="fas fa-money-bill-wave"></i>Fees
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Student Dashboard</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="text-muted">Welcome, {{ current_user.name }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Info -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-user me-2"></i>Student Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Registration Number:</strong> {{ data.student.registration_number }}</p>
+                                    <p><strong>Email:</strong> {{ data.student.email }}</p>
+                                    <p><strong>Admission Date:</strong> {{ data.student.admission_date.strftime('%d %B %Y') if data.student.admission_date else 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Guardian:</strong> {{ data.student.guardian_name }}</p>
+                                    <p><strong>Phone:</strong> {{ data.student.guardian_phone }}</p>
+                                    <p><strong>Qualification:</strong> {{ data.student.qualification }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ data.stats.total_courses }}</h3>
+                                <p>Total Courses</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-book fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ data.stats.completed_courses }}</h3>
+                                <p>Completed Courses</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-graduation-cap fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ data.stats.certificates_earned }}</h3>
+                                <p>Certificates</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-certificate fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="stats-card">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h3>{{ "%.1f"|format(data.stats.attendance_percentage) }}%</h3>
+                                <p>Attendance</p>
+                            </div>
+                            <div class="align-self-center">
+                                <i class="fas fa-calendar-check fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Results -->
+            <div class="row">
+                <div class="col-md-8 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-line me-2"></i>Recent Exam Results</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if data.recent_results %}
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Exam</th>
+                                                <th>Batch</th>
+                                                <th>Marks Obtained</th>
+                                                <th>Total Marks</th>
+                                                <th>Percentage</th>
+                                                <th>Date</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for result in data.recent_results %}
+                                            <tr>
+                                                <td>{{ result.title }}</td>
+                                                <td>{{ result.batch_name }}</td>
+                                                <td>{{ result.marks_obtained }}</td>
+                                                <td>{{ result.total_marks }}</td>
+                                                <td>{{ "%.1f"|format((result.marks_obtained / result.total_marks) * 100) }}%</td>
+                                                <td>{{ result.exam_date.strftime('%d %b %Y') if result.exam_date else 'N/A' }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-4">
+                                    <i class="fas fa-file-alt fa-3x text-muted mb-3"></i>
+                                    <h5 class="text-muted">No exam results yet</h5>
+                                    <p class="text-muted">Your exam results will appear here once they are published.</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Quick Info</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <h6>Fee Status</h6>
+                                {% if pending_fee > 0 %}
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        ₹{{ "%.2f"|format(pending_fee) }} pending
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        All fees paid
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <h6>Attendance Status</h6>
+                                {% if attendance_percentage >= 75 %}
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle me-2"></i>
+                                        Good attendance
+                                    </div>
+                                {% elif attendance_percentage >= 60 %}
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle me-2"></i>
+                                        Average attendance
+                                    </div>
+                                {% else %}
+                                    <div class="alert alert-danger">
+                                        <i class="fas fa-times-circle me-2"></i>
+                                        Low attendance
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('student.courses') }}" class="btn btn-primary w-100">
+                                        <i class="fas fa-book me-2"></i>My Courses
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('student.completed_courses') }}" class="btn btn-success w-100">
+                                        <i class="fas fa-graduation-cap me-2"></i>Completed Courses
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('student.certificates') }}" class="btn btn-warning w-100">
+                                        <i class="fas fa-certificate me-2"></i>My Certificates
+                                    </a>
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <a href="{{ url_for('student.results') }}" class="btn btn-info w-100">
+                                        <i class="fas fa-chart-line me-2"></i>View Results
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

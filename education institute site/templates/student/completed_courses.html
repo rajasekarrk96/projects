@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Completed Courses - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.courses') }}">
+                            <i class="fas fa-book"></i>My Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('student.completed_courses') }}">
+                            <i class="fas fa-graduation-cap"></i>Completed Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.certificates') }}">
+                            <i class="fas fa-certificate"></i>Certificates
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.results') }}">
+                            <i class="fas fa-chart-line"></i>Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.attendance') }}">
+                            <i class="fas fa-calendar-check"></i>Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('student.fees') }}">
+                            <i class="fas fa-money-bill-wave"></i>Fees
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Completed Courses</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <span class="text-muted">{{ data.stats.completed_courses }} courses completed</span>
+                    </div>
+                </div>
+            </div>
+
+            {% if data.completed_courses %}
+                <div class="row">
+                    {% for course in data.completed_courses %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-graduation-cap me-2"></i>{{ course.course_name }}
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ course.description }}</p>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-users me-1"></i>Batch: {{ course.batch_name }}
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>Duration: {{ course.duration_months }} months
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar-check me-1"></i>
+                                        Started: {{ course.start_date.strftime('%d %b %Y') if course.start_date else 'N/A' }}
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-flag-checkered me-1"></i>
+                                        Completed: {{ course.completion_date.strftime('%d %b %Y') if course.completion_date else course.end_date.strftime('%d %b %Y') if course.end_date else 'N/A' }}
+                                    </small>
+                                </div>
+                                
+                                {% if course.final_grade %}
+                                <div class="mb-3">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="text-muted">Final Grade:</span>
+                                        <span class="badge bg-primary">{{ course.final_grade }}%</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer">
+                                <div class="d-flex justify-content-between">
+                                    <span class="badge bg-success">
+                                        <i class="fas fa-check me-1"></i>Completed
+                                    </span>
+                                    <a href="{{ url_for('student.certificates') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-certificate me-1"></i>View Certificate
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center py-5">
+                                <i class="fas fa-graduation-cap fa-5x text-muted mb-4"></i>
+                                <h3 class="text-muted">No Completed Courses Yet</h3>
+                                <p class="text-muted">You haven't completed any courses yet. Keep studying and you'll see your completed courses here!</p>
+                                <a href="{{ url_for('student.courses') }}" class="btn btn-primary">
+                                    <i class="fas fa-book me-2"></i>View My Courses
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Achievement Summary -->
+            {% if data.completed_courses %}
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-trophy me-2"></i>Achievement Summary</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <div class="achievement-stat">
+                                        <h3 class="text-success">{{ data.stats.completed_courses }}</h3>
+                                        <p class="text-muted">Courses Completed</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="achievement-stat">
+                                        <h3 class="text-primary">{{ data.stats.certificates_earned }}</h3>
+                                        <p class="text-muted">Certificates Earned</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="achievement-stat">
+                                        <h3 class="text-info">
+                                            {% set total_months = data.completed_courses | sum(attribute='duration_months') %}
+                                            {{ total_months or 0 }}
+                                        </h3>
+                                        <p class="text-muted">Total Study Months</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="achievement-stat">
+                                        <h3 class="text-warning">
+                                            {% set avg_grade = (data.completed_courses | selectattr('final_grade') | list | map(attribute='final_grade') | list | sum) / (data.completed_courses | selectattr('final_grade') | list | length) if data.completed_courses | selectattr('final_grade') | list else 0 %}
+                                            {{ "%.1f"|format(avg_grade) }}%
+                                        </h3>
+                                        <p class="text-muted">Average Grade</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.achievement-stat {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f8f9fa;
+    margin-bottom: 1rem;
+}
+
+.achievement-stat h3 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+</style>
+{% endblock %}

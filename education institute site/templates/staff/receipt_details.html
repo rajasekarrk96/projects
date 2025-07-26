@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+
+{% block title %}Receipt Details - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.dashboard') }}">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.enquiries') }}">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('staff.admissions') }}">
+                            <i class="fas fa-user-plus"></i>Admissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('staff.fees') }}">
+                            <i class="fas fa-money-bill-wave"></i>Fee Management
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Receipt Details</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <a href="{{ url_for('staff.fees') }}" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Fees
+                        </a>
+                        <a href="{{ url_for('staff.print_receipt', receipt_no=receipt.receipt_no) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-print"></i> Print Receipt
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receipt -->
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white text-center">
+                            <h4><i class="fas fa-receipt me-2"></i>Payment Receipt</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Institute Header -->
+                            <div class="text-center mb-4">
+                                <h3 class="text-primary">Edusphere Institute</h3>
+                                <p class="text-muted">Excellence in Education</p>
+                                <hr>
+                            </div>
+
+                            <!-- Receipt Details -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Receipt Information</h6>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Receipt No:</strong></td>
+                                            <td>{{ receipt.receipt_no }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Date:</strong></td>
+                                            <td>{{ receipt.payment_date }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Payment Method:</strong></td>
+                                            <td>{{ receipt.payment_method }}</td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Student Information</h6>
+                                    <table class="table table-borderless">
+                                        <tr>
+                                            <td><strong>Student Name:</strong></td>
+                                            <td>{{ receipt.student_name }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Course:</strong></td>
+                                            <td>{{ receipt.course }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Amount Paid:</strong></td>
+                                            <td class="text-success"><strong>₹{{ "{:,}".format(receipt.amount) }}</strong></td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Payment Summary -->
+                            <div class="bg-light p-3 rounded mb-4">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <h5>Payment Summary</h5>
+                                        <p class="mb-1">Course Fee Payment</p>
+                                        {% if receipt.remarks %}
+                                        <small class="text-muted">Remarks: {{ receipt.remarks }}</small>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-4 text-end">
+                                        <h4 class="text-success">₹{{ "{:,}".format(receipt.amount) }}</h4>
+                                        <p class="text-muted mb-0">Amount Paid</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div class="text-center">
+                                <p class="text-muted mb-2">Thank you for your payment!</p>
+                                <small class="text-muted">
+                                    This is a computer-generated receipt. For any queries, please contact the administration office.
+                                </small>
+                            </div>
+
+                            <!-- Signature Section -->
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <div class="text-center">
+                                        <hr style="width: 60%; margin: 0 auto;">
+                                        <small class="text-muted">Student Signature</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="text-center">
+                                        <hr style="width: 60%; margin: 0 auto;">
+                                        <small class="text-muted">Authorized Signature</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="row mt-4">
+                <div class="col-12 text-center">
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('staff.print_receipt', receipt_no=receipt.receipt_no) }}" class="btn btn-primary">
+                            <i class="fas fa-print me-2"></i>Print Receipt
+                        </a>
+                        <button type="button" class="btn btn-outline-secondary" onclick="window.print()">
+                            <i class="fas fa-download me-2"></i>Save as PDF
+                        </button>
+                        <a href="{{ url_for('staff.fees') }}" class="btn btn-outline-primary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Fees
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+@media print {
+    .sidebar, .btn-toolbar, .btn-group {
+        display: none !important;
+    }
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+</style>
+{% endblock %}

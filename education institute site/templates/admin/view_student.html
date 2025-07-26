@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+
+{% block title %}Student Details - {{ student.name }} - Edusphere Institute{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/dashboard">
+                            <i class="fas fa-tachometer-alt"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/courses">
+                            <i class="fas fa-book"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/admin/batches">
+                            <i class="fas fa-users"></i>Batches
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/faculty">
+                            <i class="fas fa-chalkboard-teacher"></i>Faculty
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/enquiries">
+                            <i class="fas fa-question-circle"></i>Enquiries
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin/reports">
+                            <i class="fas fa-chart-bar"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">
+                    <i class="fas fa-user-graduate me-2"></i>{{ student.name }}
+                    <span class="badge bg-primary ms-2">{{ student.registration_number }}</span>
+                </h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="editStudent()">
+                            <i class="fas fa-edit me-1"></i>Edit Student
+                        </button>
+                        <a href="/admin/batches" class="btn btn-outline-secondary btn-sm">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Batches
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Information Cards -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-info-circle me-2"></i>Personal Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Full Name:</strong></p>
+                                    <p class="text-muted">{{ student.name }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Email:</strong></p>
+                                    <p class="text-muted">{{ student.email }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Registration Number:</strong></p>
+                                    <p class="text-muted">{{ student.registration_number }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Phone:</strong></p>
+                                    <p class="text-muted">{{ student.phone or 'Not provided' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Admission Date:</strong></p>
+                                    <p class="text-muted">{{ student.admission_date.strftime('%Y-%m-%d') if student.admission_date else 'N/A' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Guardian Name:</strong></p>
+                                    <p class="text-muted">{{ student.guardian_name or 'Not provided' }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Guardian Phone:</strong></p>
+                                    <p class="text-muted">{{ student.guardian_phone or 'Not provided' }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Qualification:</strong></p>
+                                    <p class="text-muted">{{ student.qualification or 'Not provided' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-chart-pie me-2"></i>Statistics</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                <h3 class="text-success">₹{{ "%.2f"|format(stats.total_fees_paid) }}</h3>
+                                <small class="text-muted">Total Fees Paid</small>
+                            </div>
+                            <div class="text-center mb-3">
+                                <h3 class="text-info">{{ stats.attendance_percentage }}%</h3>
+                                <small class="text-muted">Attendance Rate</small>
+                            </div>
+                            <div class="text-center mb-3">
+                                <h3 class="text-primary">{{ stats.classes_attended }}/{{ stats.total_classes }}</h3>
+                                <small class="text-muted">Classes Attended</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information -->
+            <div class="row mb-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-graduation-cap me-2"></i>Academic Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p><strong>Current Batch:</strong></p>
+                                    <p class="text-muted">{{ student.batch_name or 'Not assigned' }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Course:</strong></p>
+                                    <p class="text-muted">{{ student.course_name or 'Not assigned' }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p><strong>Status:</strong></p>
+                                    {% if student.is_active %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fee Records -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-money-bill-wave me-2"></i>Fee Records</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if fee_records %}
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                                <th>Receipt</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for fee in fee_records[:5] %}
+                                            <tr>
+                                                <td>{{ fee.payment_date.strftime('%Y-%m-%d') if fee.payment_date else 'N/A' }}</td>
+                                                <td>₹{{ "%.2f"|format(fee.amount) }}</td>
+                                                <td>{{ fee.payment_method|title }}</td>
+                                                <td>{{ fee.receipt_number or 'N/A' }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                {% if fee_records|length > 5 %}
+                                    <small class="text-muted">Showing 5 of {{ fee_records|length }} records</small>
+                                {% endif %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fas fa-receipt fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No fee records found</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Attendance -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-calendar-check me-2"></i>Recent Attendance</h5>
+                        </div>
+                        <div class="card-body">
+                            {% if attendance_records %}
+                                <div class="table-responsive">
+                                    <table class="table table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Batch</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for attendance in attendance_records %}
+                                            <tr>
+                                                <td>{{ attendance.date.strftime('%Y-%m-%d') if attendance.date else 'N/A' }}</td>
+                                                <td>
+                                                    {% if attendance.status == 'present' %}
+                                                        <span class="badge bg-success">Present</span>
+                                                    {% elif attendance.status == 'absent' %}
+                                                        <span class="badge bg-danger">Absent</span>
+                                                    {% else %}
+                                                        <span class="badge bg-warning">Late</span>
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ attendance.batch_name or 'N/A' }}</td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">No attendance records found</p>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 mb-2">
+                                    <button type="button" class="btn btn-outline-primary w-100" onclick="markAttendance()">
+                                        <i class="fas fa-calendar-check me-2"></i>Mark Attendance
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button type="button" class="btn btn-outline-success w-100" onclick="addFeeRecord()">
+                                        <i class="fas fa-money-bill-wave me-2"></i>Add Fee Record
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button type="button" class="btn btn-outline-info w-100" onclick="viewFullAttendance()">
+                                        <i class="fas fa-chart-line me-2"></i>Full Attendance
+                                    </button>
+                                </div>
+                                <div class="col-md-3 mb-2">
+                                    <button type="button" class="btn btn-outline-warning w-100" onclick="generateReport()">
+                                        <i class="fas fa-file-pdf me-2"></i>Generate Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editStudent() {
+    alert('Student editing feature coming soon!');
+    // In real implementation: window.location.href = `/admin/students/{{ student.id }}/edit`;
+}
+
+function markAttendance() {
+    alert('Attendance marking feature coming soon!');
+    // In real implementation: show attendance marking modal or redirect
+}
+
+function addFeeRecord() {
+    alert('Fee record addition feature coming soon!');
+    // In real implementation: show fee record modal or redirect
+}
+
+function viewFullAttendance() {
+    alert('Full attendance view feature coming soon!');
+    // In real implementation: window.location.href = `/admin/students/{{ student.id }}/attendance`;
+}
+
+function generateReport() {
+    alert('Report generation feature coming soon!');
+    // In real implementation: generate and download student report
+}
+
+// Initialize tooltips
+document.addEventListener('DOMContentLoaded', function() {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+</script>
+{% endblock %}
