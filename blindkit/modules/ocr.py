@@ -6,7 +6,7 @@ import tempfile
 import cv2
 
 # Already configured earlier
-genai.configure(api_key="AIzaSyDRh_LmTo7-uGxYFbFDj0YRgESsoweYtJQ")
+genai.configure(api_key="your_api_key")
 
 def ocr_text():
     """

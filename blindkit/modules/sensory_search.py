@@ -9,7 +9,7 @@ from PIL import Image
 import time
 
 # Assigning the API key
-genai.configure(api_key="AIzaSyDRh_LmTo7-uGxYFbFDj0YRgESsoweYtJQ")
+genai.configure(api_key="your_api_key")
 
 # Initialize the context
 context = ""

@@ -5,7 +5,7 @@ import tempfile
 import cv2
 import time
 # Configure the API key for Google Generative AI
-genai.configure(api_key="AIzaSyDRh_LmTo7-uGxYFbFDj0YRgESsoweYtJQ")  # Replace with your actual API key
+genai.configure(api_key="your_api_key")  # Replace with your actual API key
 
 def scene_desc():
     """
