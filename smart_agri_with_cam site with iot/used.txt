@@ -1,0 +1,5 @@
+1)python
+2)html,css,javascript,bootstrap
+3)sqlite3
+4)arduino ide(esp32 micro controller coded with base of c++)
+5) machine learning yolov8 supervised learning
