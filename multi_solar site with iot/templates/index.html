@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Solar Tracker</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+</head>
+<body>
+  <h1>Solar Panel Tracker</h1>
+
+  <label for="datetime">Optional Time:</label>
+  <input type="datetime-local" id="datetime">
+  <button onclick="getLocationAndSend()">Track Sun</button>
+  <button onclick="manualClean()">Clean Panel</button>
+
+  <script>
+    async function getLocationAndSend() {
+      if (!navigator.geolocation) {
+        alert("Geolocation not supported");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        // Fetch current weather data from Open-Meteo API
+        const weatherData = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                                 .then(res => res.json());
+
+        const condition = weatherData.current_weather.weathercode; // This will give the current weather code (e.g., sunny, cloudy, etc.)
+        const isCloudy = condition === 3 || condition === 4 || condition === 5; // Cloudy weather codes in Open-Meteo API
+
+        if (isCloudy) {
+          console.log("☁️ Cloudy detected — resetting");
+          sendZeroAngles();
+          return;
+        }
+
+        let timeInput = document.getElementById("datetime").value;
+        let date = timeInput ? new Date(timeInput) : new Date();
+        const sunPos = SunCalc.getPosition(date, lat, lon);
+
+        const azimuth = (sunPos.azimuth * 180 / Math.PI + 180).toFixed(2);
+        const elevation = (sunPos.altitude * 180 / Math.PI).toFixed(2);
+
+        fetch('/track_sun', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({ 
+            azimuth: parseFloat(azimuth), 
+            elevation: parseFloat(elevation),
+            timestamp: timeInput || null 
+          })
+        })
+        .then(res => res.json())
+        .then(data => console.log("☀️ Sent:", data));
+      });
+    }
+    function sendZeroAngles() {
+      // Send zero values for azimuth and elevation
+      fetch('/track_sun', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ 
+          azimuth: 0, 
+          elevation: 0,
+          timestamp: null
+        })
+      })
+      .then(res => res.json())
+      .then(data => console.log("🔁 Zero reset:", data));
+    }
+
+    function manualClean() {
+      fetch('/clean', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => console.log(data));
+    }
+
+    // Optional: run automatically every 10 seconds
+    // setInterval(getLocationAndSend, 10000);
+  </script>
+</body>
+</html>

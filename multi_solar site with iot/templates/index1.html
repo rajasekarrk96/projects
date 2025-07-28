@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Solar Tracker</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/suncalc/1.9.0/suncalc.min.js"></script>
+  <style>
+    :root {
+      --primary: #4c8bf5;
+      --secondary: #f5b042;
+      --success: #28a745;
+      --danger: #dc3545;
+      --dark: #343a40;
+      --light: #f8f9fa;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1a2a3a 0%, #0d1218 100%);
+      color: #fff;
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    
+    .solar-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      .solar-dashboard {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .panel {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .panel-header {
+      font-size: 1.25rem;
+      margin-top: 0;
+      margin-bottom: 15px;
+      color: var(--secondary);
+      display: flex;
+      align-items: center;
+    }
+    
+    .panel-header i {
+      margin-right: 10px;
+      font-size: 1.5rem;
+    }
+    
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .input-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #c8d0d9;
+    }
+    
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: #fff;
+      font-size: 1rem;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(76, 139, 245, 0.3);
+    }
+    
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #3a7ad5);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #3a7ad5, #2968c0);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(76, 139, 245, 0.4);
+    }
+    
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--secondary), #e59f2c);
+      color: white;
+    }
+    
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #e59f2c, #d48d17);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(245, 176, 66, 0.4);
+    }
+    
+    .sun-visualization {
+      position: relative;
+      height: 300px;
+      width: 100%;
+      overflow: hidden;
+      border-radius: 10px;
+      background: linear-gradient(to bottom, #0c1e3e 0%, #173e7f 100%);
+    }
+    
+    .sky {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70%;
+      background: linear-gradient(to bottom, #003973 0%, #3498db 100%);
+      transition: background 1s ease;
+    }
+    
+    .ground {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 30%;
+      background: linear-gradient(to bottom, #3e5151 0%, #2c3e50 100%);
+    }
+    
+    .sun {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle, #ffef3f 0%, #ffc837 60%, #ff8008 100%);
+      border-radius: 50%;
+      box-shadow: 0 0 50px #ff8008;
+      transition: all 1s ease;
+    }
+    
+    .panel-model {
+      position: absolute;
+      bottom: 30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 80px;
+      background: #0f3057;
+      border: 2px solid #1a508b;
+      border-radius: 5px;
+      transform-origin: center bottom;
+      transition: transform 1s ease;
+    }
+    
+    .stand {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 30%;
+      background: linear-gradient(to bottom, #66757f 0%, #4a5c69 100%);
+    }
+    
+    .info-display {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+    
+    .info-card {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .info-card h3 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #a0aec0;
+      margin-bottom: 5px;
+    }
+    
+    .info-card .value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #e2e8f0;
+    }
+    
+    .weather-indicator {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 2rem;
+    }
+    
+    .modes {
+      margin-top: 20px;
+    }
+    
+    .mode-toggle {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    .mode-toggle button {
+      flex: 1;
+      padding: 10px;
+      background: transparent;
+      border: none;
+      color: #a0aec0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .mode-toggle button.active {
+      background: rgba(76, 139, 245, 0.3);
+      color: white;
+      box-shadow: none;
+      transform: none;
+    }
+    
+    .status-bar {
+      margin-top: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 5px;
+      padding: 10px;
+      font-size: 0.9rem;
+      color: #a0aec0;
+    }
+    
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+      background: #28a745;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+    
+    .status-indicator.active {
+      animation: pulse 2s infinite;
+    }
+    
+    .cleaning-animation {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.1);
+      pointer-events: none;
+    }
+    
+    .droplet {
+      position: absolute;
+      width: 10px;
+      height: 15px;
+      background: rgba(173, 216, 230, 0.7);
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      animation: fall 1s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(100px); opacity: 0; }
+    }
+
+    #autoTracking {
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--primary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    /* Toast message */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: rgba(40, 167, 69, 0.9);
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 16px;
+      position: fixed;
+      z-index: 1;
+      left: 50%;
+      bottom: 30px;
+      font-size: 1rem;
+    }
+
+    #toast.show {
+      visibility: visible;
+      animation: fadein 0.5s, fadeout 0.5s 2.5s;
+    }
+
+    @keyframes fadein {
+      from {bottom: 0; opacity: 0;}
+      to {bottom: 30px; opacity: 1;}
+    }
+
+    @keyframes fadeout {
+      from {bottom: 30px; opacity: 1;}
+      to {bottom: 0; opacity: 0;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Smart Solar Tracker</h1>
+    </header>
+    
+    <div class="solar-dashboard">
+      <div class="panel">
+        <h2 class="panel-header">☀️ Sun Tracking Visualization</h2>
+        <div class="sun-visualization">
+          <div class="sky"></div>
+          <div class="ground"></div>
+          <div class="stand"></div>
+          <div class="panel-model"></div>
+          <div class="sun"></div>
+          <div class="cleaning-animation" id="cleaningAnimation"></div>
+          <div class="weather-indicator" id="weatherIcon">☀️</div>
+        </div>
+        
+        <div class="info-display">
+          <div class="info-card">
+            <h3>Azimuth</h3>
+            <div id="azimuthValue" class="value">-</div>
+          </div>
+          <div class="info-card">
+            <h3>Elevation</h3>
+            <div id="elevationValue" class="value">-</div>
+          </div>
+          <div class="info-card">
+            <h3>Weather</h3>
+            <div id="weatherValue" class="value">-</div>
+          </div>
+          <div class="info-card">
+            <h3>Panel Status</h3>
+            <div id="statusValue" class="value">Idle</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="panel">
+        <h2 class="panel-header">⚙️ Control Panel</h2>
+        <div class="controls">
+          <div class="input-group">
+            <label for="datetime">Simulation Time (Optional):</label>
+            <input type="datetime-local" id="datetime">
+          </div>
+          
+          <div class="btn-group">
+            <button onclick="getLocationAndSend()" class="btn-primary">
+              <span>Track Sun</span>
+            </button>
+            <button onclick="manualClean()" class="btn-secondary">
+              <span>Clean Panel</span>
+            </button>
+          </div>
+          
+          <div class="modes">
+            <h3 style="color: #a0aec0; margin-bottom: 10px;">Tracking Mode</h3>
+            <div class="mode-toggle">
+              <button class="active" id="realTimeMode">Real-time</button>
+              <button id="simulationMode">Simulation</button>
+            </div>
+          </div>
+          
+          <div id="autoTracking">
+            <label class="toggle-switch">
+              <input type="checkbox" id="autoTrackToggle">
+              <span class="slider"></span>
+            </label>
+            <span>Auto-track every 10 seconds</span>
+          </div>
+          
+          <div class="status-bar">
+            <span class="status-indicator" id="statusIndicator"></span>
+            <span id="statusText">System ready</span>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <h3>Manual Controls</h3>
+          <div class="btn-group">
+          <button onclick="manualControl(1)" class="btn-primary">UP</button>
+          <button onclick="manualControl(0)" class="btn-secondary">DOWN</button>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="toast">Tracking successfully updated!</div>
+
+  <script>
+    // Global variables
+    let trackingInterval;
+    let weatherCondition = "clear";
+    let currentAzimuth = 180;
+    let currentElevation = 45;
+    function manualControl(direction) {
+      fetch(`/manual/${direction}`, { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          console.log(`🔽🔼 Manual control (${direction ? "UP" : "DOWN"}):`, data);
+        })
+        .catch(error => {
+          console.error("Manual control error:", error);
+        });
+    }
+    // DOM Elements
+    const sunElement = document.querySelector('.sun');
+    const panelElement = document.querySelector('.panel-model');
+    const weatherIcon = document.getElementById('weatherIcon');
+    const azimuthValue = document.getElementById('azimuthValue');
+    const elevationValue = document.getElementById('elevationValue');
+    const weatherValue = document.getElementById('weatherValue');
+    const statusValue = document.getElementById('statusValue');
+    const statusIndicator = document.getElementById('statusIndicator');
+    const statusText = document.getElementById('statusText');
+    const autoTrackToggle = document.getElementById('autoTrackToggle');
+    const realTimeMode = document.getElementById('realTimeMode');
+    const simulationMode = document.getElementById('simulationMode');
+    const cleaningAnimation = document.getElementById('cleaningAnimation');
+    
+    // Initialize the visualization
+    updateSunPosition(180, 45);
+    
+    // Event listeners
+    autoTrackToggle.addEventListener('change', toggleAutoTracking);
+    realTimeMode.addEventListener('click', () => setMode('realtime'));
+    simulationMode.addEventListener('click', () => setMode('simulation'));
+    
+    function setMode(mode) {
+      if (mode === 'realtime') {
+        realTimeMode.classList.add('active');
+        simulationMode.classList.remove('active');
+        document.getElementById('datetime').value = '';
+      } else {
+        simulationMode.classList.add('active');
+        realTimeMode.classList.remove('active');
+        if (!document.getElementById('datetime').value) {
+          const now = new Date();
+          const formattedDate = now.toISOString().slice(0, 16);
+          document.getElementById('datetime').value = formattedDate;
+        }
+      }
+    }
+    
+    function toggleAutoTracking() {
+      if (autoTrackToggle.checked) {
+        startAutoTracking();
+        showToast("Auto-tracking enabled");
+      } else {
+        stopAutoTracking();
+        showToast("Auto-tracking disabled");
+      }
+    }
+    
+    function startAutoTracking() {
+      if (trackingInterval) clearInterval(trackingInterval);
+      trackingInterval = setInterval(getLocationAndSend, 10000);
+      statusIndicator.classList.add('active');
+      statusText.textContent = "Auto-tracking active";
+      statusValue.textContent = "Tracking";
+    }
+    
+    function stopAutoTracking() {
+      if (trackingInterval) clearInterval(trackingInterval);
+      trackingInterval = null;
+      statusIndicator.classList.remove('active');
+      statusText.textContent = "System ready";
+      statusValue.textContent = "Idle";
+    }
+    
+    async function getLocationAndSend() {
+      updateStatus("Locating position...");
+      
+      if (!navigator.geolocation) {
+        showToast("Geolocation not supported", "error");
+        updateStatus("Geolocation error", "error");
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(async position => {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        
+        updateStatus("Fetching weather data...");
+
+        try {
+          // Fetch current weather data from Open-Meteo API
+          const weatherData = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`)
+                                   .then(res => res.json());
+
+          const condition = weatherData.current_weather.weathercode; // Weather code
+          
+          // Determine weather condition
+          weatherCondition = getWeatherCondition(condition);
+          updateWeatherUI(weatherCondition);
+          
+          if (weatherCondition === "rainy" || weatherCondition === "snowy" ) {
+            updateStatus("Cloudy conditions detected - resetting panel position");
+            sendZeroAngles();
+            return;
+          }
+
+          let timeInput = document.getElementById("datetime").value;
+          let date = timeInput ? new Date(timeInput) : new Date();
+          const sunPos = SunCalc.getPosition(date, lat, lon);
+
+          // Convert radians to degrees and adjust
+          const azimuth = (sunPos.azimuth * 180 / Math.PI + 180).toFixed(2);
+          const elevation = (sunPos.altitude * 180 / Math.PI).toFixed(2);
+          
+          // Update UI
+          updateSunPosition(azimuth, elevation);
+          
+          // Send data to server
+          updateStatus("Tracking sun position...");
+          
+          fetch('/track_sun', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ 
+              azimuth: parseFloat(azimuth), 
+              elevation: parseFloat(elevation),
+              timestamp: timeInput || null 
+            })
+          })
+          .then(res => res.json())
+          .then(data => {
+            console.log("☀️ Sent:", data);
+            showToast("Sun tracking updated successfully");
+            updateStatus("Tracking complete", "success");
+            setTimeout(() => {
+              updateStatus("System ready");
+            }, 3000);
+          })
+          .catch(err => {
+            updateStatus("Tracking error", "error");
+            showToast("Error tracking sun position", "error");
+          });
+        } catch (error) {
+          updateStatus("Weather data error", "error");
+          showToast("Error fetching weather data", "error");
+        }
+      }, error => {
+        updateStatus("Location error", "error");
+        showToast("Location error: " + error.message, "error");
+      });
+    }
+
+    function sendZeroAngles() {
+      updateSunPosition(180, 0); // Reset visualization
+      
+      // Send zero values for azimuth and elevation
+      fetch('/track_sun', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ 
+          azimuth: 0, 
+          elevation: 0,
+          timestamp: null
+        })
+      })
+      .then(res => res.json())
+      .then(data => {
+        console.log("🔁 Zero reset:", data);
+        showToast("Panel reset to neutral position");
+        updateStatus("Panel reset complete", "success");
+        setTimeout(() => {
+          updateStatus("System ready");
+        }, 3000);
+      })
+      .catch(err => {
+        updateStatus("Reset error", "error");
+        showToast("Error resetting panel", "error");
+      });
+    }
+
+    function manualClean() {
+      updateStatus("Cleaning panel...");
+      statusValue.textContent = "Cleaning";
+      
+      // Create cleaning animation
+      cleaningAnimation.style.display = 'block';
+      cleaningAnimation.innerHTML = '';
+      
+      for (let i = 0; i < 20; i++) {
+        const droplet = document.createElement('div');
+        droplet.className = 'droplet';
+        droplet.style.left = `${Math.random() * 100}%`;
+        droplet.style.animationDelay = `${Math.random() * 1}s`;
+        cleaningAnimation.appendChild(droplet);
+      }
+      
+      fetch('/clean', { method: 'POST' })
+        .then(res => res.json())
+        .then(data => {
+          console.log(data);
+          showToast("Panel cleaning complete");
+          
+          setTimeout(() => {
+            cleaningAnimation.style.display = 'none';
+            updateStatus("Cleaning complete", "success");
+            statusValue.textContent = trackingInterval ? "Tracking" : "Idle";
+            
+            setTimeout(() => {
+              updateStatus("System ready");
+            }, 2000);
+          }, 3000);
+        })
+        .catch(err => {
+          cleaningAnimation.style.display = 'none';
+          updateStatus("Cleaning error", "error");
+          showToast("Error cleaning panel", "error");
+        });
+    }
+    
+    function updateSunPosition(azimuth, elevation) {
+      // Store current values for display
+      currentAzimuth = parseFloat(azimuth);
+      currentElevation = parseFloat(elevation);
+      
+      // Update the display values
+      azimuthValue.textContent = `${currentAzimuth}°`;
+      elevationValue.textContent = `${currentElevation}°`;
+      
+      // Calculate sun position in the visualization
+      // Map azimuth (0-360) to left-right position (0-100%)
+      const sunLeftPos = ((azimuth % 360) / 360) * 100;
+      
+      // Map elevation (-90 to 90) to top position (100-0%)
+      // When elevation is -90, sun is at bottom (100%)
+      // When elevation is 90, sun is at top (0%)
+      const elevationNormalized = (elevation < 0) ? 0 : elevation;
+      const sunTopPos = 100 - ((elevationNormalized + 10) / 100) * 70;
+      
+      // Update sun position
+      sunElement.style.left = `${sunLeftPos}%`;
+      sunElement.style.top = `${sunTopPos}%`;
+      
+      // Update sky color based on elevation (simulate day/night)
+      const skyElement = document.querySelector('.sky');
+      if (elevation > 0) {
+        // Day
+        const brightness = Math.min(1, elevation / 45);
+        skyElement.style.background = `linear-gradient(to bottom, 
+          hsl(210, 100%, ${20 + brightness * 30}%) 0%, 
+          hsl(210, 100%, ${40 + brightness * 20}%) 100%)`;
+      } else {
+        // Night
+        skyElement.style.background = `linear-gradient(to bottom, 
+          hsl(240, 50%, 10%) 0%, 
+          hsl(240, 30%, 20%) 100%)`;
+      }
+      
+      // Adjust panel tilt based on elevation
+      const panelTilt = Math.max(0, Math.min(80, 90 - elevation));
+      panelElement.style.transform = `translateX(-50%) rotate(${-panelTilt}deg)`;
+    }
+    
+    function getWeatherCondition(code) {
+      // Process Open-Meteo weather code
+      // https://open-meteo.com/en/docs
+      if (code === 0) return "clear"; // Clear sky
+      if (code === 1) return "partly_cloudy"; // Mainly clear
+      if (code === 2) return "partly_cloudy"; // Partly cloudy
+      if (code === 3) return "cloudy"; // Overcast
+      if ([45, 48].includes(code)) return "foggy"; // Fog
+      if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return "rainy"; // Various rain
+      if ([71, 73, 75, 77, 85, 86].includes(code)) return "snowy"; // Various snow
+      if ([95, 96, 99].includes(code)) return "stormy"; // Thunderstorm
+      return "clear"; // Default
+    }
+    
+    function updateWeatherUI(condition) {
+      // Update weather icon and text
+      switch (condition) {
+        case "clear":
+          weatherIcon.textContent = "☀️";
+          weatherValue.textContent = "Clear";
+          break;
+        case "partly_cloudy":
+          weatherIcon.textContent = "⛅";
+          weatherValue.textContent = "Partly Cloudy";
+          break;
+        case "cloudy":
+          weatherIcon.textContent = "☁️";
+          weatherValue.textContent = "Cloudy";
+          break;
+        case "rainy":
+          weatherIcon.textContent = "🌧️";
+          weatherValue.textContent = "Rainy";
+          break;
+        case "snowy":
+          weatherIcon.textContent = "❄️";
+          weatherValue.textContent = "Snowy";
+          break;
+        case "stormy":
+          weatherIcon.textContent = "⛈️";
+          weatherValue.textContent = "Stormy";
+          break;
+        case "foggy":
+          weatherIcon.textContent = "🌫️";
+          weatherValue.textContent = "Foggy";
+          break;
+      }
+    }
+    
+    function updateStatus(message, type = "info") {
+      statusText.textContent = message;
+      
+      // Remove existing status classes
+      statusIndicator.className = "status-indicator";
+      
+      // Add appropriate status class
+      switch(type) {
+        case "success":
+          statusIndicator.style.background = "#28a745";
+          break;
+        case "error":
+          statusIndicator.style.background = "#dc3545";
+          break;
+        case "warning":
+          statusIndicator.style.background = "#ffc107";
+          break;
+        default:
+          statusIndicator.style.background = "#17a2b8";
+          statusIndicator.classList.add("active");
+      }
+    }
+    
+    function showToast(message, type = "success") {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      
+      // Set toast style based on type
+      if (type === "error") {
+        toast.style.backgroundColor = "rgba(220, 53, 69, 0.9)";
+      } else {
+        toast.style.backgroundColor = "rgba(40, 167, 69, 0.9)";
+      }
+      
+      toast.className = "show";
+      
+      // After 3 seconds, remove the show class
+      setTimeout(() => { 
+        toast.className = toast.className.replace("show", ""); 
+      }, 3000);
+    }
+    
+    // Initialize with current time if in simulation mode
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default time for simulation mode
+      if (simulationMode.classList.contains('active') && !document.getElementById('datetime').value) {
+        const now = new Date();
+        const formattedDate = now.toISOString().slice(0, 16);
+        document.getElementById('datetime').value = formattedDate;
+      }
+    });
+  </script>
+</body>
+</html>
