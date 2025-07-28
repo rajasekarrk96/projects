@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block title %}Connections - ProConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="fas fa-users me-2"></i>My Connections</h2>
+        
+        <!-- Pending Requests -->
+        {% if pending_requests %}
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Pending Connection Requests</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for request in pending_requests %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="connection-request-card">
+                            <div class="d-flex align-items-center">
+                                <div class="profile-pic me-3">
+                                    {% if request.sender.profile_picture %}
+                                        <img src="{{ url_for('static', filename='uploads/' + request.sender.profile_picture) }}" 
+                                             class="rounded-circle" width="50" height="50" alt="Profile Picture">
+                                    {% else %}
+                                        <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                             style="width: 50px; height: 50px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">
+                                        <a href="{{ url_for('profile', username=request.sender.username) }}" class="text-decoration-none">
+                                            {{ request.sender.first_name }} {{ request.sender.last_name }}
+                                        </a>
+                                    </h6>
+                                    <p class="text-muted mb-1">@{{ request.sender.username }}</p>
+                                    {% if request.sender.location %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ request.sender.location }}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-3 d-flex gap-2">
+                                <button class="btn btn-success btn-sm accept-request" data-request-id="{{ request.id }}">
+                                    <i class="fas fa-check me-1"></i>Accept
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm reject-request" data-request-id="{{ request.id }}">
+                                    <i class="fas fa-times me-1"></i>Reject
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Accepted Connections -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-user-check me-2"></i>My Connections ({{ accepted_connections|length }})</h5>
+            </div>
+            <div class="card-body">
+                {% if accepted_connections %}
+                <div class="row">
+                    {% for connection in accepted_connections %}
+                    {% set other_user = connection.sender if connection.sender_id != current_user.id else connection.receiver %}
+                    <div class="col-md-6 col-lg-4 mb-3">
+                        <div class="connection-card">
+                            <div class="d-flex align-items-center">
+                                <div class="profile-pic me-3">
+                                    {% if other_user.profile_picture %}
+                                        <img src="{{ url_for('static', filename='uploads/' + other_user.profile_picture) }}" 
+                                             class="rounded-circle" width="60" height="60" alt="Profile Picture">
+                                    {% else %}
+                                        <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-user text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">
+                                        <a href="{{ url_for('profile', username=other_user.username) }}" class="text-decoration-none">
+                                            {{ other_user.first_name }} {{ other_user.last_name }}
+                                        </a>
+                                    </h6>
+                                    <p class="text-muted mb-1">@{{ other_user.username }}</p>
+                                    {% if other_user.is_company %}
+                                        <p class="text-primary mb-1">
+                                            <i class="fas fa-building me-1"></i>{{ other_user.company_name or 'Company' }}
+                                        </p>
+                                    {% endif %}
+                                    {% if other_user.location %}
+                                        <small class="text-muted">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ other_user.location }}
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="mt-3 d-flex gap-2">
+                                <a href="{{ url_for('profile', username=other_user.username) }}" class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-user me-1"></i>View Profile
+                                </a>
+                                <button class="btn btn-outline-success btn-sm message-btn" data-user-id="{{ other_user.id }}">
+                                    <i class="fas fa-envelope me-1"></i>Message
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-users text-muted" style="font-size: 4rem;"></i>
+                    <h4 class="mt-3 text-muted">No connections yet</h4>
+                    <p class="text-muted">Start building your professional network by connecting with others!</p>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-primary">
+                        <i class="fas fa-search me-1"></i>Discover People
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Message Modal -->
+<div class="modal fade" id="messageModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Send Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="messageForm">
+                    <input type="hidden" id="messageUserId" name="user_id">
+                    <div class="mb-3">
+                        <label for="messageContent" class="form-label">Message</label>
+                        <textarea class="form-control" id="messageContent" name="content" rows="4" 
+                                  placeholder="Write your message here..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="sendMessage">
+                    <i class="fas fa-paper-plane me-1"></i>Send Message
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Accept connection request
+    document.querySelectorAll('.accept-request').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const requestId = this.dataset.requestId;
+            
+            fetch(`/connections/${requestId}/accept`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    // Remove the request card
+                    this.closest('.connection-request-card').remove();
+                    alert('Connection request accepted!');
+                    location.reload(); // Refresh to update connection count
+                } else {
+                    alert(data.error || 'Error accepting request');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error accepting request');
+            });
+        });
+    });
+    
+    // Reject connection request
+    document.querySelectorAll('.reject-request').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const requestId = this.dataset.requestId;
+            
+            if (confirm('Are you sure you want to reject this connection request?')) {
+                fetch(`/connections/${requestId}/reject`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Remove the request card
+                        this.closest('.connection-request-card').remove();
+                        alert('Connection request rejected');
+                    } else {
+                        alert(data.error || 'Error rejecting request');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error rejecting request');
+                });
+            }
+        });
+    });
+    
+    // Message functionality
+    const messageModal = new bootstrap.Modal(document.getElementById('messageModal'));
+    const messageUserId = document.getElementById('messageUserId');
+    const sendMessage = document.getElementById('sendMessage');
+    
+    document.querySelectorAll('.message-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            messageUserId.value = userId;
+            messageModal.show();
+        });
+    });
+    
+    sendMessage.addEventListener('click', function() {
+        const content = document.getElementById('messageContent').value.trim();
+        const userId = messageUserId.value;
+        
+        if (!content) {
+            alert('Please enter a message');
+            return;
+        }
+        
+        // For now, just show a success message
+        // In a real implementation, you would send this to your messaging system
+        alert('Message sent successfully! (This is a demo - messaging feature would be implemented here)');
+        messageModal.hide();
+        document.getElementById('messageContent').value = '';
+    });
+});
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.connection-request-card,
+.connection-card {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 10px;
+    padding: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.connection-request-card:hover,
+.connection-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.profile-pic img {
+    object-fit: cover;
+}
+</style>
+{% endblock %} 

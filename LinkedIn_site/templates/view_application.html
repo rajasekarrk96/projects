@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+
+{% block title %}Application Details - ProConnect{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="{{ url_for('company_applications') }}">Applications</a></li>
+                            <li class="breadcrumb-item"><a href="{{ url_for('job_applications', job_id=job.id) }}">{{ job.title }}</a></li>
+                            <li class="breadcrumb-item active">Application Details</li>
+                        </ol>
+                    </nav>
+                    <h2 class="mb-1">
+                        <i class="fas fa-file-alt text-primary me-2"></i>Application Details
+                    </h2>
+                    <p class="text-muted mb-0">Review application for {{ job.title }}</p>
+                </div>
+                <div class="text-end">
+                    <span class="badge bg-primary fs-6">{{ application.status|title }}</span>
+                </div>
+            </div>
+            
+            <div class="row">
+                <!-- Applicant Information -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-user me-2"></i>Applicant Information
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3 text-center">
+                                    {% if application.applicant.profile_picture %}
+                                        <img src="{{ url_for('static', filename='uploads/' + application.applicant.profile_picture) }}" 
+                                             class="rounded-circle mb-3" width="120" height="120" alt="Profile">
+                                    {% else %}
+                                        <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center mx-auto mb-3" 
+                                             style="width: 120px; height: 120px;">
+                                            <i class="fas fa-user text-white" style="font-size: 3rem;"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-9">
+                                    <h4 class="mb-2">{{ application.applicant.first_name }} {{ application.applicant.last_name }}</h4>
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-envelope me-2"></i>{{ application.applicant.email }}
+                                    </p>
+                                    {% if application.applicant.location %}
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-map-marker-alt me-2"></i>{{ application.applicant.location }}
+                                    </p>
+                                    {% endif %}
+                                    {% if application.applicant.website %}
+                                    <p class="text-muted mb-2">
+                                        <i class="fas fa-globe me-2"></i>
+                                        <a href="{{ application.applicant.website }}" target="_blank">{{ application.applicant.website }}</a>
+                                    </p>
+                                    {% endif %}
+                                    <p class="text-muted mb-0">
+                                        <i class="fas fa-calendar me-2"></i>Applied {{ application.applied_at.strftime('%B %d, %Y at %I:%M %p') }}
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            {% if application.applicant.bio %}
+                            <hr>
+                            <h6 class="text-muted">About</h6>
+                            <p>{{ application.applicant.bio }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Cover Letter -->
+                    {% if application.cover_letter %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-text me-2"></i>Cover Letter
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="bg-light p-3 rounded">
+                                {{ application.cover_letter|nl2br }}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Resume -->
+                    {% if application.resume_url %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-file-pdf me-2"></i>Resume/CV
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="fas fa-file-pdf text-danger me-3" style="font-size: 2rem;"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">Resume</h6>
+                                    <small class="text-muted">Uploaded with application</small>
+                                </div>
+                                <div class="btn-group">
+                                    <a href="{{ url_for('static', filename='uploads/' + application.resume_url) }}" 
+                                       class="btn btn-outline-primary btn-sm" target="_blank">
+                                        <i class="fas fa-download me-1"></i>Download Resume
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Job Information & Actions -->
+                <div class="col-lg-4">
+                    <!-- Job Details -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-briefcase me-2"></i>Job Details
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="mb-2">{{ job.title }}</h6>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i>{{ job.location or 'Remote' }}
+                            </p>
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-clock me-1"></i>{{ job.job_type|title }}
+                            </p>
+                            {% if job.salary_min and job.salary_max %}
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-dollar-sign me-1"></i>${{ job.salary_min|number_format }} - ${{ job.salary_max|number_format }}
+                            </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Application Status -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-info-circle me-2"></i>Application Status
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center mb-3">
+                                {% if application.status == 'pending' %}
+                                    <span class="badge bg-warning fs-5">Pending Review</span>
+                                {% elif application.status == 'accepted' %}
+                                    <span class="badge bg-success fs-5">Accepted</span>
+                                {% elif application.status == 'rejected' %}
+                                    <span class="badge bg-danger fs-5">Rejected</span>
+                                {% endif %}
+                            </div>
+                            
+                            {% if application.status == 'pending' %}
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-success update-status-btn" 
+                                        data-application-id="{{ application.id }}" 
+                                        data-status="accepted">
+                                    <i class="fas fa-check me-2"></i>Accept Application
+                                </button>
+                                <button class="btn btn-danger update-status-btn" 
+                                        data-application-id="{{ application.id }}" 
+                                        data-status="rejected">
+                                    <i class="fas fa-times me-2"></i>Reject Application
+                                </button>
+                            </div>
+                            {% else %}
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Application has been {{ application.status }}
+                                </p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">
+                                <i class="fas fa-cogs me-2"></i>Quick Actions
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <a href="{{ url_for('profile', username=application.applicant.username) }}" 
+                                   class="btn btn-outline-primary">
+                                    <i class="fas fa-user me-2"></i>View Full Profile
+                                </a>
+                                <a href="mailto:{{ application.applicant.email }}" 
+                                   class="btn btn-outline-secondary">
+                                    <i class="fas fa-envelope me-2"></i>Send Email
+                                </a>
+                                <a href="{{ url_for('job_applications', job_id=job.id) }}" 
+                                   class="btn btn-outline-info">
+                                    <i class="fas fa-arrow-left me-2"></i>Back to Applications
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update application status
+    const updateStatusBtns = document.querySelectorAll('.update-status-btn');
+    
+    updateStatusBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const applicationId = this.dataset.applicationId;
+            const status = this.dataset.status;
+            
+            if (confirm(`Are you sure you want to ${status} this application?`)) {
+                this.disabled = true;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Updating...';
+                
+                fetch(`/company/applications/${applicationId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `status=${status}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        // Update the status badge
+                        const statusBadge = document.querySelector('.badge');
+                        let badgeClass = 'bg-warning';
+                        let badgeText = 'Pending Review';
+                        
+                        if (status === 'accepted') {
+                            badgeClass = 'bg-success';
+                            badgeText = 'Accepted';
+                        } else if (status === 'rejected') {
+                            badgeClass = 'bg-danger';
+                            badgeText = 'Rejected';
+                        }
+                        
+                        statusBadge.className = `badge ${badgeClass} fs-5`;
+                        statusBadge.textContent = badgeText;
+                        
+                        // Update the status section
+                        const statusSection = document.querySelector('.card-body');
+                        statusSection.innerHTML = `
+                            <div class="text-center mb-3">
+                                <span class="badge ${badgeClass} fs-5">${badgeText}</span>
+                            </div>
+                            <div class="text-center">
+                                <p class="text-muted mb-0">
+                                    <i class="fas fa-check-circle me-1"></i>
+                                    Application has been ${status}
+                                </p>
+                            </div>
+                        `;
+                        
+                        alert(data.message);
+                    } else {
+                        alert(data.error || 'Error updating status');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating status');
+                })
+                .finally(() => {
+                    this.disabled = false;
+                    this.innerHTML = status === 'accepted' ? '<i class="fas fa-check me-2"></i>Accept Application' : '<i class="fas fa-times me-2"></i>Reject Application';
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

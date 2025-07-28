@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Jobs - ProConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-lg-3">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-filter me-2"></i>Filters</h6>
+                
+                <div class="mb-3">
+                    <label for="jobType" class="form-label">Job Type</label>
+                    <select class="form-select" id="jobType">
+                        <option value="">All Types</option>
+                        <option value="full-time">Full Time</option>
+                        <option value="part-time">Part Time</option>
+                        <option value="internship">Internship</option>
+                        <option value="freelance">Freelance</option>
+                    </select>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location" placeholder="City, Country">
+                </div>
+                
+                <div class="mb-3">
+                    <label for="salaryRange" class="form-label">Salary Range</label>
+                    <select class="form-select" id="salaryRange">
+                        <option value="">Any Salary</option>
+                        <option value="0-30000">$0 - $30,000</option>
+                        <option value="30000-60000">$30,000 - $60,000</option>
+                        <option value="60000-100000">$60,000 - $100,000</option>
+                        <option value="100000+">$100,000+</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-primary w-100" id="applyFilters">
+                    <i class="fas fa-search me-1"></i>Apply Filters
+                </button>
+            </div>
+        </div>
+        
+        {% if current_user.is_company %}
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-plus me-2"></i>Post a Job</h6>
+                <p class="card-text">Looking for talent? Post a job opening and reach qualified candidates.</p>
+                <a href="{{ url_for('post_job') }}" class="btn btn-success w-100">
+                    <i class="fas fa-plus me-1"></i>Post Job
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Jobs List -->
+    <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4><i class="fas fa-briefcase me-2"></i>Available Jobs</h4>
+            <div class="text-muted">
+                <span id="jobCount">{{ jobs|length }}</span> jobs found
+            </div>
+        </div>
+        
+        <div id="jobsList">
+            {% for job in jobs %}
+            <div class="card mb-4 job-card" data-job-id="{{ job.id }}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex align-items-start mb-3">
+                                <div class="company-logo me-3">
+                                    {% if job.company.profile_picture %}
+                                        <img src="{{ url_for('static', filename='uploads/' + job.company.profile_picture) }}" 
+                                             class="rounded" width="60" height="60" alt="Company Logo">
+                                    {% else %}
+                                        <div class="bg-secondary rounded d-flex align-items-center justify-content-center" 
+                                             style="width: 60px; height: 60px;">
+                                            <i class="fas fa-building text-white"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="flex-grow-1">
+                                    <h5 class="card-title mb-1">
+                                        <a href="#" class="text-decoration-none job-title">{{ job.title }}</a>
+                                    </h5>
+                                    <p class="text-primary mb-1">{{ job.company.first_name }} {{ job.company.last_name }}</p>
+                                    {% if job.location %}
+                                        <p class="text-muted mb-2">
+                                            <i class="fas fa-map-marker-alt me-1"></i>{{ job.location }}
+                                        </p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <p class="card-text">{{ job.description[:200] }}{% if job.description|length > 200 %}...{% endif %}</p>
+                            
+                            <div class="job-tags mb-3">
+                                <span class="badge bg-primary me-2">{{ job.job_type|title }}</span>
+                                {% if job.salary_min and job.salary_max and job.salary_min > 0 and job.salary_max > 0 %}
+                                    <span class="badge bg-success me-2">${{ job.salary_min|number_format }} - ${{ job.salary_max|number_format }}</span>
+                                {% endif %}
+                                <span class="badge bg-info">{{ job.created_at.strftime('%B %d') }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 text-end">
+                            {% if current_user.is_authenticated and not current_user.is_company %}
+                                <button class="btn btn-primary apply-job-btn" data-job-id="{{ job.id }}">
+                                    <i class="fas fa-paper-plane me-1"></i>Apply Now
+                                </button>
+                            {% elif current_user.is_authenticated and current_user.is_company and current_user.id == job.company_id %}
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View Applications
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-edit me-1"></i>Edit
+                                    </button>
+                                </div>
+                            {% else %}
+                                <a href="{{ url_for('login') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Login to Apply
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        {% if not jobs %}
+        <div class="text-center py-5">
+            <i class="fas fa-briefcase text-muted" style="font-size: 4rem;"></i>
+            <h4 class="mt-3 text-muted">No jobs available</h4>
+            <p class="text-muted">Check back later for new opportunities!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Apply Job Modal -->
+<div class="modal fade" id="applyJobModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Apply for <span id="modalJobTitle"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="applyJobForm" enctype="multipart/form-data">
+                    <input type="hidden" id="modalJobId" name="job_id">
+                    
+                    <div class="mb-3">
+                        <label for="coverLetter" class="form-label">Cover Letter *</label>
+                        <textarea class="form-control" id="coverLetter" name="cover_letter" rows="6" 
+                                  placeholder="Tell us why you're the perfect fit for this position..."></textarea>
+                        <div class="form-text">Explain your interest in the role and relevant experience.</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="resume" class="form-label">Resume/CV</label>
+                        <input type="file" class="form-control" id="resume" name="resume" accept=".pdf,.doc,.docx">
+                        <div class="form-text">Upload your resume (PDF, DOC, DOCX - max 5MB)</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="submitApplication">
+                    <i class="fas fa-paper-plane me-1"></i>Submit Application
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    const jobCards = document.querySelectorAll('.job-card');
+    const jobCount = document.getElementById('jobCount');
+    
+    // Filter functionality
+    applyFiltersBtn.addEventListener('click', function() {
+        const jobType = document.getElementById('jobType').value;
+        const location = document.getElementById('location').value.toLowerCase();
+        const salaryRange = document.getElementById('salaryRange').value;
+        
+        let visibleJobs = 0;
+        
+        jobCards.forEach(card => {
+            const jobTypeText = card.querySelector('.badge.bg-primary').textContent.toLowerCase();
+            const locationText = card.querySelector('.text-muted')?.textContent.toLowerCase() || '';
+            const salaryText = card.querySelector('.badge.bg-success')?.textContent || '';
+            
+            let showCard = true;
+            
+            // Job type filter
+            if (jobType && !jobTypeText.includes(jobType)) {
+                showCard = false;
+            }
+            
+            // Location filter
+            if (location && !locationText.includes(location)) {
+                showCard = false;
+            }
+            
+            // Salary filter
+            if (salaryRange && salaryText) {
+                const salaryMatch = salaryText.match(/\$([0-9,]+)/g);
+                if (salaryMatch) {
+                    const minSalary = parseInt(salaryMatch[0].replace(/[$,]/g, ''));
+                    const maxSalary = parseInt(salaryMatch[1].replace(/[$,]/g, ''));
+                    
+                    switch(salaryRange) {
+                        case '0-30000':
+                            if (maxSalary > 30000) showCard = false;
+                            break;
+                        case '30000-60000':
+                            if (minSalary < 30000 || maxSalary > 60000) showCard = false;
+                            break;
+                        case '60000-100000':
+                            if (minSalary < 60000 || maxSalary > 100000) showCard = false;
+                            break;
+                        case '100000+':
+                            if (minSalary < 100000) showCard = false;
+                            break;
+                    }
+                }
+            }
+            
+            if (showCard) {
+                card.style.display = 'block';
+                visibleJobs++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        jobCount.textContent = visibleJobs;
+    });
+    
+    // Apply job functionality
+    const applyJobBtns = document.querySelectorAll('.apply-job-btn');
+    const applyJobModal = new bootstrap.Modal(document.getElementById('applyJobModal'));
+    const modalJobTitle = document.getElementById('modalJobTitle');
+    const modalJobId = document.getElementById('modalJobId');
+    const submitApplication = document.getElementById('submitApplication');
+    
+    applyJobBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const jobId = this.dataset.jobId;
+            const jobCard = this.closest('.job-card');
+            const jobTitle = jobCard.querySelector('.job-title').textContent;
+            
+            modalJobTitle.textContent = jobTitle;
+            modalJobId.value = jobId;
+            applyJobModal.show();
+        });
+    });
+    
+    submitApplication.addEventListener('click', function() {
+        const form = document.getElementById('applyJobForm');
+        const formData = new FormData(form);
+        const jobId = modalJobId.value;
+        
+        const coverLetter = document.getElementById('coverLetter').value.trim();
+        if (!coverLetter) {
+            alert('Please write a cover letter');
+            return;
+        }
+        
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Submitting...';
+        
+        fetch(`/jobs/${jobId}/apply`, {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                alert('Application submitted successfully!');
+                applyJobModal.hide();
+                form.reset();
+            } else {
+                alert(data.error || 'Error submitting application');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error submitting application');
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-paper-plane me-1"></i>Submit Application';
+        });
+    });
+    
+    // File validation
+    const resumeInput = document.getElementById('resume');
+    resumeInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const fileSize = file.size / 1024 / 1024; // Convert to MB
+            if (fileSize > 5) {
+                alert('File size must be less than 5MB');
+                this.value = '';
+                return;
+            }
+            
+            const allowedTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            if (!allowedTypes.includes(file.type)) {
+                alert('Please select a valid file (PDF, DOC, DOCX)');
+                this.value = '';
+                return;
+            }
+        }
+    });
+});
+</script>
+{% endblock %} 

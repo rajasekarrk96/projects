@@ -1,0 +1,276 @@
+{% extends "base.html" %}
+
+{% block title %}{{ user.first_name }} {{ user.last_name }} - ProConnect{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Profile Header -->
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center">
+                        <div class="profile-pic mb-3">
+                            {% if user.profile_picture %}
+                                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" 
+                                     class="rounded-circle" width="120" height="120" alt="Profile Picture">
+                            {% else %}
+                                <div class="bg-primary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                     style="width: 120px; height: 120px;">
+                                    <i class="fas fa-user text-white" style="font-size: 3rem;"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="mb-1">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="text-muted mb-2">@{{ user.username }}</p>
+                        {% if user.is_company %}
+                            <p class="text-primary mb-2"><i class="fas fa-building me-1"></i>{{ user.company_name or 'Company' }}</p>
+                        {% endif %}
+                        {% if user.location %}
+                            <p class="text-muted mb-2"><i class="fas fa-map-marker-alt me-1"></i>{{ user.location }}</p>
+                        {% endif %}
+                        {% if user.website %}
+                            <p class="text-muted mb-2">
+                                <i class="fas fa-globe me-1"></i>
+                                <a href="{{ user.website }}" target="_blank" class="text-decoration-none">{{ user.website }}</a>
+                            </p>
+                        {% endif %}
+                        {% if user.bio %}
+                            <p class="mb-3">{{ user.bio }}</p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3 text-end">
+                        {% if current_user.is_authenticated and current_user.id != user.id %}
+                            <button class="btn btn-primary mb-2 connect-btn" data-user-id="{{ user.id }}">
+                                <i class="fas fa-user-plus me-1"></i>Connect
+                            </button>
+                        {% endif %}
+                        {% if current_user.is_authenticated and current_user.id == user.id %}
+                            <a href="{{ url_for('edit_profile') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-edit me-1"></i>Edit Profile
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Content -->
+    <div class="col-lg-8">
+        <!-- About Section -->
+        {% if user.is_company and user.company_description %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-building me-2"></i>About {{ user.company_name or 'Company' }}</h5>
+                <p class="card-text">{{ user.company_description }}</p>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Experience Section -->
+        {% if user.experiences %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-briefcase me-2"></i>Experience</h5>
+                {% for experience in user.experiences %}
+                <div class="experience-item mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">{{ experience.title }}</h6>
+                            <p class="text-primary mb-1">{{ experience.company }}</p>
+                            {% if experience.location %}
+                                <p class="text-muted mb-1"><i class="fas fa-map-marker-alt me-1"></i>{{ experience.location }}</p>
+                            {% endif %}
+                            <p class="text-muted mb-1">
+                                {{ experience.start_date.strftime('%B %Y') }} - 
+                                {% if experience.current %}Present{% else %}{{ experience.end_date.strftime('%B %Y') }}{% endif %}
+                            </p>
+                        </div>
+                        {% if experience.current %}
+                            <span class="badge bg-success">Current</span>
+                        {% endif %}
+                    </div>
+                    {% if experience.description %}
+                        <p class="mt-2">{{ experience.description }}</p>
+                    {% endif %}
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Education Section -->
+        {% if user.educations %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-graduation-cap me-2"></i>Education</h5>
+                {% for education in user.educations %}
+                <div class="education-item mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h6 class="mb-1">{{ education.degree }}</h6>
+                            <p class="text-primary mb-1">{{ education.institution }}</p>
+                            {% if education.field_of_study %}
+                                <p class="text-muted mb-1">{{ education.field_of_study }}</p>
+                            {% endif %}
+                            <p class="text-muted mb-1">
+                                {{ education.start_date.strftime('%B %Y') }} - 
+                                {% if education.current %}Present{% else %}{{ education.end_date.strftime('%B %Y') }}{% endif %}
+                            </p>
+                        </div>
+                        {% if education.current %}
+                            <span class="badge bg-success">Current</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Skills Section -->
+        {% if user.skills %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-tools me-2"></i>Skills</h5>
+                <div class="skills-container">
+                    {% for user_skill in user.skills %}
+                    <span class="badge bg-primary me-2 mb-2">{{ user_skill.skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Posts Section -->
+        {% if user.posts %}
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-newspaper me-2"></i>Recent Posts</h5>
+                {% for post in user.posts[:5] %}
+                <div class="post-item mb-3">
+                    <div class="d-flex align-items-start">
+                        <div class="profile-pic me-3">
+                            {% if post.author.profile_picture %}
+                                <img src="{{ url_for('static', filename='uploads/' + post.author.profile_picture) }}" 
+                                     class="rounded-circle" width="40" height="40" alt="Profile Picture">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center" 
+                                     style="width: 40px; height: 40px;">
+                                    <i class="fas fa-user text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-grow-1">
+                            <p class="mb-1">{{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}</p>
+                            <small class="text-muted">{{ post.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                    </div>
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Stats Card -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-chart-bar me-2"></i>Profile Stats</h6>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">{{ user.connections_sent|length + user.connections_received|length }}</h4>
+                            <small class="text-muted">Connections</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">{{ user.posts|length }}</h4>
+                            <small class="text-muted">Posts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contact Info -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-envelope me-2"></i>Contact Information</h6>
+                <div class="contact-info">
+                    <p class="mb-2">
+                        <i class="fas fa-envelope me-2 text-muted"></i>
+                        <a href="mailto:{{ user.email }}" class="text-decoration-none">{{ user.email }}</a>
+                    </p>
+                    {% if user.website %}
+                    <p class="mb-2">
+                        <i class="fas fa-globe me-2 text-muted"></i>
+                        <a href="{{ user.website }}" target="_blank" class="text-decoration-none">Website</a>
+                    </p>
+                    {% endif %}
+                    {% if user.location %}
+                    <p class="mb-0">
+                        <i class="fas fa-map-marker-alt me-2 text-muted"></i>
+                        {{ user.location }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Member Since -->
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title"><i class="fas fa-calendar me-2"></i>Member Since</h6>
+                <p class="mb-0">{{ user.created_at.strftime('%B %Y') }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const connectBtn = document.querySelector('.connect-btn');
+    
+    if (connectBtn) {
+        connectBtn.addEventListener('click', function() {
+            const userId = this.dataset.userId;
+            
+            fetch(`/connect/${userId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    this.innerHTML = '<i class="fas fa-check me-1"></i>Request Sent';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-success');
+                    this.disabled = true;
+                    alert('Connection request sent successfully!');
+                } else {
+                    alert(data.error || 'Error sending connection request');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error sending connection request');
+            });
+        });
+    }
+});
+</script>
+{% endblock %} 
