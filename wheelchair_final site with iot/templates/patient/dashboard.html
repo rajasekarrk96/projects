@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Dashboard - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h2>Patient Dashboard</h2>
+        <div class="dashboard-actions">
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary"><i class="fas fa-calendar-plus"></i> Book Appointment</a>
+            <a href="{{ url_for('patient_iot_data') }}" class="btn btn-primary"><i class="fas fa-table"></i>IoT Data</a>
+        </div>  
+             
+    </div>
+
+    <div class="dashboard-content">
+        <div class="row">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>My Medical Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-section">
+                            <h4>Medical History</h4>
+                            <p>{{ patient.medical_history or 'No medical history recorded.' }}</p>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h4>My Doctor</h4>
+                            <p>{{ doctor_user.username if doctor_user else "Doctor not assigned." }}</p>
+                        </div>
+                        
+                        <div class="info-section">
+                            <h4>My Caretaker</h4>
+                            <p>{{ caretaker_user.username if caretaker_user else "No caretaker assigned." }}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <h3>My Appointments</h3>
+                        <a href="{{ url_for('book_appointment') }}" class="btn btn-sm">Book New</a>
+                    </div>
+                    <div class="card-body">
+                        {% if appointments %}
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date & Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                        <tr>
+                                            <td>{{ appointment.date_time.strftime('%d %b %Y, %H:%M') }}</td>
+                                            <td>
+                                                {% if appointment.status == 'pending' %}
+                                                    <span class="badge badge-warning">Pending</span>
+                                                {% elif appointment.status == 'accepted' %}
+                                                    <span class="badge badge-success">Accepted</span>
+                                                {% elif appointment.status == 'cancelled' %}
+                                                    <span class="badge badge-danger">Cancelled</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p class="no-data">No appointments scheduled.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

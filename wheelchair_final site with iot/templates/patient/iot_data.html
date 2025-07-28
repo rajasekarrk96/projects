@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-3">IoT Data History</h2>
+
+    {% if iot_data %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>SpO2 (%)</th>
+                <th>Heart Rate (BPM)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for data in iot_data %}
+            <tr class="{% if data.spo2 < 90 or data.heart_rate < 50 or data.heart_rate > 100 %} critical {% else %} normal {% endif %}">
+                <td>{{ data.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>{{ data.spo2 }}</td>
+                <td>{{ data.heart_rate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No IoT data available.</p>
+    {% endif %}
+</div>
+
+<script>
+    window.onload = function () {
+        setTimeout(function () {
+            console.log("Page loaded for 5 seconds.");
+        }, 5000);
+    };
+</script>
+
+<style>
+    .critical {
+        background-color: #ffcccc !important; /* Light Red for Critical */
+        color: #900;
+        font-weight: bold;
+    }
+
+    .normal {
+        background-color: #ccffcc !important; /* Light Green for Normal */
+        color: #060;
+    }
+</style>
+
+{% endblock %}

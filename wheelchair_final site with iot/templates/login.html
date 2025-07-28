@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-form">
+        <h2>Login to Your Account</h2>
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label for="username">Username (rajasekar)</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password (1234)</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+        <div class="auth-info">
+            <p>Only registered users can access the system.</p>
+            <p>New doctor? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

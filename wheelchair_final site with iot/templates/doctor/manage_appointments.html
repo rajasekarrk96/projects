@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Appointments - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <h2>Manage Appointments</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="openTab(event, 'pending')">Pending Appointments</button>
+        <button class="tab-btn" onclick="openTab(event, 'accepted')">Accepted Appointments</button>
+    </div>
+    
+    <div id="pending" class="tab-content active">
+        <div class="card">
+            <div class="card-header">
+                <h3>Pending Appointments</h3>
+            </div>
+            <div class="card-body">
+                {% if pending_appointments %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date & Time</th>
+                                <th>Requested On</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in appointment_data if data.appointment.status == 'pending' %}
+                                <tr>
+                                    <td>{{ data.patient.username if data.patient else "Unknown" }}</td>
+                                    <td>{{ data.appointment.date_time.strftime('%d %b %Y, %H:%M') }}</td>
+                                    <td>{{ data.appointment.created_at.strftime('%d %b %Y') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('handle_appointment', appointment_id=data.appointment.id, action='accept') }}" class="btn btn-sm btn-success">Accept</a>
+                                        <a href="{{ url_for('handle_appointment', appointment_id=data.appointment.id, action='reject') }}" class="btn btn-sm btn-danger">Reject</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No pending appointments.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div id="accepted" class="tab-content">
+        <div class="card">
+            <div class="card-header">
+                <h3>Accepted Appointments</h3>
+            </div>
+            <div class="card-body">
+                {% if accepted_appointments %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date & Time</th>
+                                <th>Caretaker</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for data in appointment_data if data.appointment.status == 'accepted' %}
+                                <tr>
+                                    <td>{{ data.patient.username if data.patient else "Unknown" }}</td>
+                                    <td>{{ data.appointment.date_time.strftime('%d %b %Y, %H:%M') }}</td>
+                                    <td>
+                                        {{ data.caretaker.username if data.caretaker else "None" }}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No accepted appointments.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openTab(evt, tabName) {
+        let tabContent = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
+        }
+    
+        let tabButtons = document.getElementsByClassName("tab-btn");
+        for (let i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove("active");
+        }
+    
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.classList.add("active");
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("pending").style.display = "block";
+        document.getElementById("accepted").style.display = "none";
+    });
+</script>
+{% endblock %}

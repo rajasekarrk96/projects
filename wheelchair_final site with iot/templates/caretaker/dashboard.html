@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Caretaker Dashboard - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h2>Caretaker Dashboard</h2>
+        <a href="{{ url_for('key') }}" class="btn btn-primary">Remote Control</a>
+        <a href="{{ url_for('img') }}" class="btn btn-primary">Camera Feed</a>
+    </div>
+    
+    <div class="dashboard-content">
+        <div class="row">
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>My Patients</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if locss %}
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Name</th>
+                                        <th>Latitude</th>
+                                        <th>Longitude</th>
+                                        <th>Map</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for lc in locss %}
+                                        <tr>
+                                            <td>{{ lc.patient_name }}</td>
+                                            <td>{{ lc.lat }}</td>
+                                            <td>{{ lc.lon }}</td>
+                                            <td>
+                                                {% if lc.lat and lc.lon %}
+                                                    <a href="https://www.google.com/maps?q={{ lc.lat }},{{ lc.lon }}" target="_blank">
+                                                        View Map
+                                                    </a>
+                                                {% else %}
+                                                    N/A
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p class="no-data">No patients details.</p>
+                        {% endif %}
+                    </div>
+                    
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Assigned Patients</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if patients %}
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Name</th>
+                                        <th>Medical History</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for patient in patients %}
+                                        <tr>
+                                            <td>{{ User.query.get(patient.user_id).username }}</td>
+                                            <td>{{ patient.medical_history or 'No history available' }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p class="no-data">No patients assigned yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Patient Appointments</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if appointment_data %}
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Appointment Date & Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointment_data %}
+                                        {% if appointment.status != "cancelled" %}
+                                            <tr>
+                                                <td>{{ appointment.patient_name }}</td>
+                                                <td>{{ appointment.date_time }}</td>
+                                                <td>
+                                                    {% if appointment.status == "Today" %}
+                                                        <span class="badge badge-info">Today</span>
+                                                    {% elif appointment.status == "Upcoming" %}
+                                                        <span class="badge badge-success">Upcoming</span>
+                                                    {% elif appointment.status == "Past" %}
+                                                        <span class="badge badge-danger">Past</span>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        {% else %}
+                            <p class="no-data">No appointments found.</p>
+                        {% endif %}
+                    </div>
+                    
+                </div>
+            </div>
+            
+            <!-- <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="action-list">
+                            <a href="#" class="action-item">
+                                <i class="fas fa-file-medical"></i>
+                                <span>View Patient Records</span>
+                            </a>
+                            <a href="#" class="action-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>Message Doctor</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+{% endblock %}

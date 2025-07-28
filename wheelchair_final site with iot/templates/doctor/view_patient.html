@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Patient Details - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="content-header">
+        <h2>Patient: {{ user.username }}</h2>
+        <div class="header-actions">
+            <a href="{{ url_for('doctor_dashboard') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Medical Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-section">
+                        <h4>Medical History</h4>
+                        <p>{{ patient.medical_history or 'No medical history recorded.' }}</p>
+                        <button class="btn btn-sm">Edit Medical History</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Appointment History</h3>
+                </div>
+                <div class="card-body">
+                    {% set appointments = Appointment.query.filter_by(patient_id=patient.id).all() %}
+                    {% if appointments %}
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{ appointment.date_time.strftime('%d %b %Y, %H:%M') }}</td>
+                                        <td>
+                                            {% if appointment.status == 'pending' %}
+                                                <span class="badge badge-warning">Pending</span>
+                                            {% elif appointment.status == 'accepted' %}
+                                                <span class="badge badge-success">Accepted</span>
+                                            {% elif appointment.status == 'cancelled' %}
+                                                <span class="badge badge-danger">Cancelled</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if appointment.notes %}
+                                                {{ appointment.notes }}
+                                            {% else %}
+                                                No notes
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="no-data">No appointment history.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Patient Details</h3>
+                </div>
+                <div class="card-body">
+                    <div class="info-item">
+                        <span class="info-label">Username:</span>
+                        <span class="info-value">{{ user.username }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Email:</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Caretaker:</span>
+                        <span class="info-value">
+                            {% if patient.caretaker_id %}
+                                {{ User.query.get(Caretaker.query.get(patient.caretaker_id).user_id).username }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                </div>
+                <div class="card-body">
+                    <div class="action-list">
+                        <a href="#" class="action-item">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Schedule Appointment</span>
+                        </a>
+                        <a href="#" class="action-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>Send Message</span>
+                        </a>
+                        <a href="#" class="action-item">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Edit Patient Info</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Welcome to MediConnect</h1>
+        <p>A secure healthcare management system for doctors, patients, and caretakers.</p>
+        <a href="{{ url_for('login') }}" class="btn btn-primary">Login</a>
+        
+
+    </div>
+</section>
+
+<section class="features">
+    <div class="feature-box">
+        <i class="fas fa-user-md"></i>
+        <h3>For Doctors</h3>
+        <p>Manage patient records, create accounts, and handle appointments efficiently.</p>
+    </div>
+    <div class="feature-box">
+        <i class="fas fa-user"></i>
+        <h3>For Patients</h3>
+        <p>View your medical history and book appointments with your doctor.</p>
+    </div>
+    <div class="feature-box">
+        <i class="fas fa-hands-helping"></i>
+        <h3>For Caretakers</h3>
+        <p>Monitor patient health data and assist in their healthcare journey.</p>
+    </div>
+</section>
+{% endblock %}

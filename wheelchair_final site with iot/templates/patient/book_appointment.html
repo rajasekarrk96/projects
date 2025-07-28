@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Book Appointment - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Book an Appointment</h2>
+    <form method="POST" action="{{ url_for('book_appointment') }}">
+        <div class="form-group">
+            <label for="appointment_date">Date</label>
+            <input type="date" id="appointment_date" name="appointment_date" required min="{{ current_date }}">
+        </div>
+        <div class="form-group">
+            <label for="appointment_time">Time</label>
+            <input type="time" id="appointment_time" name="appointment_time" required>
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes (Optional)</label>
+            <textarea id="notes" name="notes" rows="4" placeholder="Any additional information for your doctor..."></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Request Appointment</button>
+            <a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

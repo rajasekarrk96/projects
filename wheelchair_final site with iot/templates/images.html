@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Live Camera Feed</title>
+  <style>
+    img {
+      width: 640px;
+      height: auto;
+      border: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <h2>Live Camera Stream</h2>
+  <img id="cam" src="http://192.168.180.103/cam-mid.jpg" alt="Camera Feed">
+
+  <script>
+    const img = document.getElementById('cam');
+    setInterval(() => {
+      img.src = "http://192.168.180.103/cam-mid.jpg?rand=" + Math.random();
+    }, 100); // Adjust the interval (in ms) as needed
+  </script>
+</body>
+</html>

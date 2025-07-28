@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard - Healthcare Management System{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h2>Doctor Dashboard</h2>
+        <div class="dashboard-actions">
+            <a href="{{ url_for('create_accounts') }}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Create Accounts</a>
+            <a href="{{ url_for('manage_appointments') }}" class="btn btn-secondary"><i class="fas fa-calendar-check"></i> Manage Appointments</a>
+        </div>
+    </div>
+
+    <div class="dashboard-stats">
+        <div class="stat-box">
+            <i class="fas fa-user-injured"></i>
+            <h3>Patients</h3>
+            <p class="stat-count">{{ patients|length }}</p>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-hands-helping"></i>
+            <h3>Caretakers</h3>
+            <p class="stat-count">{{ caretakers|length }}</p>
+        </div>
+        <div class="stat-box">
+            <i class="fas fa-clock"></i>
+            <h3>Pending Appointments</h3>
+            <p class="stat-count">{{ pending_appointments|length }}</p>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="card">
+            <div class="card-header">
+                <h3>Recent Patients</h3>
+            </div>
+            <div class="card-body">
+                {% if patients %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Caretaker</th>
+                                <th>Last SpO2 (%)</th>
+                                <th>Last Heart Rate (BPM)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for patient in patients %}
+                                <tr>
+                                    <td>{{ User.query.get(patient.user_id).username }}</td>
+                                    <td>
+                                        {% if patient.caretaker_id %}
+                                            {% set caretaker_user = User.query.get(patient.caretaker_id) %}
+                                            {{ caretaker_user.username if caretaker_user else "No Caretaker Found" }}
+                                        {% else %}
+                                            No Caretaker Assigned
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if patient.last_iot_data %}
+                                            {% set spo2 = patient.last_iot_data.spo2 %}
+                                            {% if spo2 < 95 %}
+                                                <span style="color: red; font-weight: bold;">{{ spo2 }} ⚠</span>
+                                            {% else %}
+                                                {{ spo2 }}
+                                            {% endif %}
+                                        {% else %}
+                                            No Data
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if patient.last_iot_data %}
+                                            {% set hr = patient.last_iot_data.heart_rate %}
+                                            {% if hr < 60 or hr > 100 %}
+                                                <span style="color: red; font-weight: bold;">{{ hr }} ⚠</span>
+                                            {% else %}
+                                                {{ hr }}
+                                            {% endif %}
+                                        {% else %}
+                                            No Data
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No patients yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>Pending Appointments</h3>
+                <a href="{{ url_for('manage_appointments') }}" class="view-all">Manage All</a>
+            </div>
+            <div class="card-body">
+                {% if pending_appointments %}
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Patient</th>
+                                <th>Date & Time</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appointment in pending_appointments %}
+                                <tr>
+                                    <td>{{ User.query.get(Patient.query.get(appointment.patient_id).user_id).username }}</td>
+                                    <td>{{ appointment.date_time.strftime('%d %b %Y, %H:%M') }}</td>
+                                    <td>
+                                        <a href="{{ url_for('handle_appointment', appointment_id=appointment.id, action='accept') }}" class="btn btn-sm btn-success">Accept</a>
+                                        <a href="{{ url_for('handle_appointment', appointment_id=appointment.id, action='reject') }}" class="btn btn-sm btn-danger">Reject</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-data">No pending appointments.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alert for abnormal vitals -->
+<!-- Audio element -->
+<audio id="alertSound" preload="auto">
+    <source src="{{ url_for('static', filename='audio/buzz.mp3') }}" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let alerts = [];
+        const alertSound = document.getElementById('alertSound');
+
+        {% for patient in patients %}
+            {% if patient.last_iot_data %}
+                {% set spo2 = patient.last_iot_data.spo2 %}
+                {% set hr = patient.last_iot_data.heart_rate %}
+                {% set name = User.query.get(patient.user_id).username %}
+
+                {% if spo2 < 95 %}
+                    alerts.push("Low SpO₂ for {{ name }} ({{ spo2 }}%)");
+                {% endif %}
+                {% if hr < 60 or hr > 100 %}
+                    alerts.push("Abnormal heart rate for {{ name }} ({{ hr }} BPM)");
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        if (alerts.length > 0) {
+            // Attempt to play audio
+            alertSound.play().catch(e => {
+                console.warn("Audio playback failed (possibly due to autoplay policy):", e);
+            });
+            alert(alerts.join('\\n'));
+        }
+    });
+</script>
+
+
+{% endblock %}

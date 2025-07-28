@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wheelchair Control System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --background-color: #ecf0f1;
+            --text-color: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            color: var(--secondary-color);
+            margin: 20px 0 15px;
+            font-weight: 500;
+        }
+
+        .control-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .control-grid button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .control-grid button:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .mode-buttons button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .mode-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        .movement-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .movement-controls .stop-btn {
+            grid-column: 2;
+            background-color: #e74c3c !important;
+        }
+
+        .icon {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Smart Wheelchair Control System</h1>
+
+        <div class="section-title">Control Mode</div>
+        <div class="mode-buttons">
+            <button onclick="setMode(0)">
+                <i class="fas fa-eye icon"></i>Blink Mode
+            </button>
+            <button onclick="setMode(1)">
+                <i class="fas fa-globe icon"></i>Website Mode
+            </button>
+            <button onclick="setMode(2)">
+                <i class="fas fa-cam icon"></i>Camera Mode
+            </button>
+        </div>
+
+        <div class="section-title">Movement Control</div>
+        <div class="movement-controls">
+            <div class="control-grid">
+                <div></div>
+                <button onclick="sendMovement('forward')">
+                    <i class="fas fa-arrow-up icon"></i>Forward
+                </button>
+                <div></div>
+
+                <button onclick="sendMovement('left')">
+                    <i class="fas fa-arrow-left icon"></i>Left
+                </button>
+                <button onclick="sendMovement('stop')" class="stop-btn">
+                    <i class="fas fa-stop icon"></i>Stop
+                </button>
+                <button onclick="sendMovement('right')">
+                    <i class="fas fa-arrow-right icon"></i>Right
+                </button>
+
+                <div></div>
+                <button onclick="sendMovement('backward')">
+                    <i class="fas fa-arrow-down icon"></i>Backward
+                </button>
+                <div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMovement(direction) {
+            fetch(`/move/${direction}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Optional: Add visual feedback
+                    const buttons = document.querySelectorAll('button');
+                    buttons.forEach(btn => btn.classList.remove('active'));
+                    event.target.classList.add('active');
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+        function setMode(mode) {
+            fetch(`/set_mode?mode=${mode}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // Optional: Add mode selection visual feedback
+                    const modeButtons = document.querySelectorAll('.mode-buttons button');
+                    modeButtons.forEach(btn => btn.classList.remove('selected'));
+                    event.target.classList.add('selected');
+                })
+                .catch(error => console.error("Error:", error));
+        }
+    </script>
+</body>
+</html>
