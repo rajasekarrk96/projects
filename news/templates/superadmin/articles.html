@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Articles - Super Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h1>Manage Articles</h1>
+            <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in articles %}
+                        <tr>
+                            <td>{{ article.title }}</td>
+                            <td>
+                                {% if article.is_anonymous %}
+                                <em>Anonymous</em>
+                                {% else %}
+                                {{ article.author.username }}
+                                {% endif %}
+                            </td>
+                            <td>{{ article.category.name }}</td>
+                            <td>
+                                <span class="badge bg-{{ 'success' if article.status == 'published' else 'warning' }}">
+                                    {{ article.status }}
+                                </span>
+                            </td>
+                            <td>{{ article.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('superadmin.view_article', id=article.id) }}" class="btn btn-sm btn-info">
+                                        View
+                                    </a>
+                                    <form method="POST" action="{{ url_for('superadmin.delete_article', id=article.id) }}" style="display: inline;">
+                                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this article? This action cannot be undone.')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

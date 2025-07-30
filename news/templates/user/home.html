@@ -1,0 +1,225 @@
+{% extends 'base.html' %}
+
+{% block title %}Latest News - News Portal{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="fas fa-newspaper me-3"></i>Latest News
+            </h1>
+            <p class="text-muted mb-0">Stay updated with the most recent stories and insights</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="article-count">
+                <span class="badge bg-primary fs-6">{{ articles|length }} Articles</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-filter me-2"></i>Filter Articles
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="get" action="{{ url_for('user.home') }}">
+            <div class="row align-items-end">
+                <div class="col-md-8">
+                    <label for="category" class="form-label">Category</label>
+                    <select name="category" id="category" class="form-control">
+                        <option value="">All Categories</option>
+                        {% for category in categories %}
+                        <option value="{{ category.id }}" {% if selected_category == category.id %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Filter Articles
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Articles Grid -->
+{% if articles %}
+<div class="row">
+    {% for article in articles %}
+    <div class="col-lg-6 col-xl-4 mb-4">
+        <div class="card article-card h-100">
+            <div class="card-header d-flex justify-content-between align-items-start">
+                <div class="article-meta">
+                    <h5 class="card-title mb-1">{{ article.title }}</h5>
+                    <div class="article-info">
+                        <span class="badge bg-secondary me-2">{{ article.category.name }}</span>
+                        <small class="text-muted">
+                            <i class="fas fa-calendar-alt me-1"></i>
+                            {{ article.created_at.strftime('%b %d, %Y') }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p class="card-text text-muted">
+                    {{ article.content|truncate(120) }}
+                </p>
+                <div class="article-author mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="author-avatar me-2">
+                            <i class="fas fa-user-circle fa-2x text-primary"></i>
+                        </div>
+                        <div class="author-info">
+                            <small class="text-muted">By</small>
+                            <div class="author-name">
+                                {% if article.is_anonymous %}
+                                <em>Anonymous</em>
+                                {% else %}
+                                <strong>{{ article.author.username }}</strong>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer bg-transparent">
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ url_for('user.article', id=article.id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-readme me-1"></i>Read More
+                    </a>
+                    <div class="article-stats">
+                        <small class="text-muted">
+                            <i class="fas fa-eye me-1"></i>Views
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Load More Section -->
+<div class="text-center mt-5">
+    <div class="card bg-light border-0">
+        <div class="card-body py-4">
+            <h5 class="text-muted mb-3">Want to see more articles?</h5>
+            <p class="text-muted mb-3">Check back regularly for the latest updates and breaking news.</p>
+            <a href="{{ url_for('user.home') }}" class="btn btn-outline-primary">
+                <i class="fas fa-sync-alt me-2"></i>Refresh Articles
+            </a>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- No Articles State -->
+<div class="text-center py-5">
+    <div class="card bg-light border-0">
+        <div class="card-body py-5">
+            <div class="empty-state mb-4">
+                <i class="fas fa-newspaper fa-4x text-muted mb-3"></i>
+                <h4 class="text-muted">No Articles Found</h4>
+                <p class="text-muted mb-4">
+                    {% if selected_category %}
+                        No articles found in the selected category. Try a different category or check back later.
+                    {% else %}
+                        No articles are available at the moment. Please check back later for new content.
+                    {% endif %}
+                </p>
+                {% if selected_category %}
+                <a href="{{ url_for('user.home') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>View All Articles
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.article-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.article-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.article-card .card-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+}
+
+.article-card .card-title {
+    color: white;
+    font-size: 1.1rem;
+    line-height: 1.4;
+}
+
+.article-info {
+    margin-top: 0.5rem;
+}
+
+.article-author {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+}
+
+.author-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.author-name {
+    font-size: 0.9rem;
+}
+
+.article-stats {
+    font-size: 0.8rem;
+}
+
+.empty-state {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.article-count .badge {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+@media (max-width: 768px) {
+    .page-header .row {
+        text-align: center;
+    }
+    
+    .article-count {
+        margin-top: 1rem;
+    }
+}
+</style>
+{% endblock %}

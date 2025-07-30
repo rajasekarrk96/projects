@@ -1,0 +1,309 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - News Portal{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5 mb-5">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-4">
+            <i class="fas fa-newspaper text-primary me-3"></i>
+            Welcome to NewsPortal
+        </h1>
+        <p class="lead text-muted mb-4">Your trusted source for the latest news, insights, and stories from around the world.</p>
+        {% if not session.get('user_id') %}
+        <div class="hero-buttons">
+            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-sign-in-alt me-2"></i>Get Started
+            </a>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Join Now
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if session.get('user_id') %}
+<!-- User Dashboard -->
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-circle me-2"></i>
+                    Welcome back, {{ session.get('username') }}!
+                </h3>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-4">You are logged in as <span class="badge bg-primary">{{ session.get('role')|title }}</span></p>
+                
+                <div class="role-specific-content">
+                    {% if session.get('role') == 'superadmin' %}
+                    <div class="admin-panel">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-crown me-2"></i>Super Admin Dashboard
+                        </h4>
+                        <p class="text-muted mb-4">As a Super Admin, you have full access to all system features:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-users text-primary me-2"></i>
+                                    <strong>User Management</strong>
+                                    <p class="small text-muted mb-0">Manage all users and roles</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    <strong>Approvals</strong>
+                                    <p class="small text-muted mb-0">Approve/reject registrations</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-cog text-warning me-2"></i>
+                                    <strong>System Config</strong>
+                                    <p class="small text-muted mb-0">Configure system settings</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-chart-bar text-info me-2"></i>
+                                    <strong>Analytics</strong>
+                                    <p class="small text-muted mb-0">View system logs and stats</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    {% elif session.get('role') == 'admin' %}
+                    <div class="admin-panel">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-shield-alt me-2"></i>Admin Dashboard
+                        </h4>
+                        <p class="text-muted mb-4">As an Admin, you can manage content and users:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-users text-primary me-2"></i>
+                                    <strong>User Management</strong>
+                                    <p class="small text-muted mb-0">Manage regular users</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-newspaper text-success me-2"></i>
+                                    <strong>Content Management</strong>
+                                    <p class="small text-muted mb-0">Review and approve content</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-clock text-warning me-2"></i>
+                                    <strong>Pending Reviews</strong>
+                                    <p class="small text-muted mb-0">Handle approval requests</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-comments text-info me-2"></i>
+                                    <strong>Comment Moderation</strong>
+                                    <p class="small text-muted mb-0">Moderate user comments</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    {% elif session.get('role') == 'publisher' %}
+                    <div class="publisher-panel">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-edit me-2"></i>Publisher Dashboard
+                        </h4>
+                        <p class="text-muted mb-4">As a Publisher, you can create and manage content:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-plus-circle text-success me-2"></i>
+                                    <strong>Create Articles</strong>
+                                    <p class="small text-muted mb-0">Write and publish new content</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-folder-open text-primary me-2"></i>
+                                    <strong>Manage Content</strong>
+                                    <p class="small text-muted mb-0">Edit and organize your articles</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-eye text-info me-2"></i>
+                                    <strong>View Analytics</strong>
+                                    <p class="small text-muted mb-0">Track article performance</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-comments text-warning me-2"></i>
+                                    <strong>Engage Readers</strong>
+                                    <p class="small text-muted mb-0">Respond to comments</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ url_for('publisher.dashboard') }}" class="btn btn-primary">
+                                <i class="fas fa-tachometer-alt me-2"></i>Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="user-panel">
+                        <h4 class="text-primary mb-3">
+                            <i class="fas fa-user me-2"></i>User Dashboard
+                        </h4>
+                        <p class="text-muted mb-4">As a regular user, you can explore and engage with content:</p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-newspaper text-primary me-2"></i>
+                                    <strong>Read Articles</strong>
+                                    <p class="small text-muted mb-0">Browse latest news and stories</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-comment text-success me-2"></i>
+                                    <strong>Comment & Discuss</strong>
+                                    <p class="small text-muted mb-0">Share your thoughts</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-bookmark text-warning me-2"></i>
+                                    <strong>Save Favorites</strong>
+                                    <p class="small text-muted mb-0">Bookmark interesting articles</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="feature-card p-3 mb-3 bg-light rounded">
+                                    <i class="fas fa-user-edit text-info me-2"></i>
+                                    <strong>Update Profile</strong>
+                                    <p class="small text-muted mb-0">Manage your account</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ url_for('user.home') }}" class="btn btn-primary">
+                                <i class="fas fa-newspaper me-2"></i>Browse Articles
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Features Section for Non-logged Users -->
+<div class="row mb-5">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-newspaper fa-3x text-primary"></i>
+                </div>
+                <h4>Latest News</h4>
+                <p class="text-muted">Stay updated with the most recent news and stories from trusted sources.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-comments fa-3x text-success"></i>
+                </div>
+                <h4>Community Discussion</h4>
+                <p class="text-muted">Engage in meaningful discussions with other readers and share your perspective.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100 text-center">
+            <div class="card-body">
+                <div class="feature-icon mb-3">
+                    <i class="fas fa-shield-alt fa-3x text-warning"></i>
+                </div>
+                <h4>Quality Content</h4>
+                <p class="text-muted">All content is carefully curated and moderated to ensure quality and accuracy.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Call to Action -->
+<div class="text-center py-5">
+    <div class="card bg-primary text-white">
+        <div class="card-body py-5">
+            <h3 class="mb-3">Ready to get started?</h3>
+            <p class="mb-4">Join thousands of readers who trust NewsPortal for their daily news.</p>
+            <a href="{{ url_for('auth.register') }}" class="btn btn-light btn-lg">
+                <i class="fas fa-user-plus me-2"></i>Create Account
+            </a>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 1rem;
+    margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+    color: white;
+    -webkit-background-clip: unset;
+    -webkit-text-fill-color: unset;
+    background-clip: unset;
+}
+
+.hero-section .lead {
+    color: white !important;
+    font-weight: 500;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card {
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-color);
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.feature-icon {
+    color: var(--primary-color);
+}
+
+.card.bg-primary {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%) !important;
+}
+</style>
+{% endblock %}

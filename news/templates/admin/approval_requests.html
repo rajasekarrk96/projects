@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Approval Requests{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Approval Requests</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Pending Approval Requests</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            {% if requests %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Requester</th>
+                            <th>Target Type</th>
+                            <th>Target ID</th>
+                            <th>Action</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in requests %}
+                        <tr>
+                            <td>{{ request.id }}</td>
+                            <td>{{ request.requester.username }}</td>
+                            <td>{{ request.target_table }}</td>
+                            <td>{{ request.target_id }}</td>
+                            <td>{{ request.action_type }}</td>
+                            <td>
+                                <span class="badge bg-warning">{{ request.status }}</span>
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    {% if request.target_table == 'articles' %}
+                                    <a href="{{ url_for('admin.view_article', id=request.target_id) }}" class="btn btn-sm btn-info">View Target</a>
+                                    {% endif %}
+                                    <form method="POST" action="{{ url_for('admin.process_approval', request_id=request.id) }}" style="display: inline;">
+                                        <input type="hidden" name="status" value="approved">
+                                        <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('admin.process_approval', request_id=request.id) }}" style="display: inline;">
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No pending approval requests found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,226 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Administrators - News Portal{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="fas fa-users-cog me-3"></i>Manage Administrators
+            </h1>
+            <p class="text-muted mb-0">Create and manage admin and super admin accounts</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group" role="group">
+                <a href="{{ url_for('superadmin.create_admin') }}" class="btn btn-primary">
+                    <i class="fas fa-shield-alt me-2"></i>Create Admin
+                </a>
+                <a href="{{ url_for('superadmin.create_superadmin') }}" class="btn btn-warning">
+                    <i class="fas fa-crown me-2"></i>Create Super Admin
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Admin Accounts Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-shield-alt me-2"></i>Admin Accounts
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if admins %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for admin in admins %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-secondary">{{ admin.id }}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-shield-alt text-primary me-2"></i>
+                                <strong>{{ admin.username }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ admin.email }}</td>
+                        <td>
+                            <span class="badge {% if admin.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                <i class="fas fa-{% if admin.is_active %}check-circle{% else %}times-circle{% endif %} me-1"></i>
+                                {{ 'Active' if admin.is_active else 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {{ admin.created_at.strftime('%b %d, %Y') if admin.created_at else 'N/A' }}
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('superadmin.toggle_user_status', id=admin.id) }}" 
+                                   class="btn {% if admin.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                                   title="{{ 'Deactivate' if admin.is_active else 'Activate' }} account">
+                                    <i class="fas fa-{% if admin.is_active %}pause{% else %}play{% endif %}"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-shield-alt fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No Admin Accounts Found</h5>
+            <p class="text-muted">Create your first admin account to get started.</p>
+            <a href="{{ url_for('superadmin.create_admin') }}" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Admin Account
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Super Admin Accounts Section -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-crown me-2"></i>Super Admin Accounts
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if superadmins %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for superadmin in superadmins %}
+                    <tr>
+                        <td>
+                            <span class="badge bg-warning">{{ superadmin.id }}</span>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-crown text-warning me-2"></i>
+                                <strong>{{ superadmin.username }}</strong>
+                            </div>
+                        </td>
+                        <td>{{ superadmin.email }}</td>
+                        <td>
+                            <span class="badge {% if superadmin.is_active %}bg-success{% else %}bg-danger{% endif %}">
+                                <i class="fas fa-{% if superadmin.is_active %}check-circle{% else %}times-circle{% endif %} me-1"></i>
+                                {{ 'Active' if superadmin.is_active else 'Inactive' }}
+                            </span>
+                        </td>
+                        <td>
+                            <small class="text-muted">
+                                {{ superadmin.created_at.strftime('%b %d, %Y') if superadmin.created_at else 'N/A' }}
+                            </small>
+                        </td>
+                        <td>
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ url_for('superadmin.toggle_user_status', id=superadmin.id) }}" 
+                                   class="btn {% if superadmin.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+                                   title="{{ 'Deactivate' if superadmin.is_active else 'Activate' }} account">
+                                    <i class="fas fa-{% if superadmin.is_active %}pause{% else %}play{% endif %}"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-4">
+            <i class="fas fa-crown fa-3x text-muted mb-3"></i>
+            <h5 class="text-muted">No Super Admin Accounts Found</h5>
+            <p class="text-muted">Create super admin accounts for full system access.</p>
+            <a href="{{ url_for('superadmin.create_superadmin') }}" class="btn btn-warning">
+                <i class="fas fa-plus me-2"></i>Create Super Admin Account
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card bg-light border-0">
+            <div class="card-body text-center">
+                <i class="fas fa-shield-alt fa-2x text-primary mb-3"></i>
+                <h6>Admin Management</h6>
+                <p class="text-muted small">Create and manage admin accounts for content moderation</p>
+                <a href="{{ url_for('superadmin.create_admin') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus me-1"></i>Create Admin
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card bg-light border-0">
+            <div class="card-body text-center">
+                <i class="fas fa-crown fa-2x text-warning mb-3"></i>
+                <h6>Super Admin Management</h6>
+                <p class="text-muted small">Create super admin accounts with full system access</p>
+                <a href="{{ url_for('superadmin.create_superadmin') }}" class="btn btn-warning btn-sm">
+                    <i class="fas fa-plus me-1"></i>Create Super Admin
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.table th {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+}
+
+.badge {
+    font-weight: 500;
+}
+</style>
+{% endblock %}

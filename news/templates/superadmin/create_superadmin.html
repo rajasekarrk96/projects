@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Super Admin Account - News Portal{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="mb-2">
+                <i class="fas fa-crown me-3"></i>Create Super Admin Account
+            </h1>
+            <p class="text-muted mb-0">Create a new super administrator account with full system access</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{{ url_for('superadmin.admins') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Admins
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-user-shield me-2"></i>Super Admin Details
+                </h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('superadmin.create_superadmin') }}">
+                    <div class="form-group mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user me-2"></i>Username
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               placeholder="Enter username"
+                               required>
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope me-2"></i>Email Address
+                        </label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               placeholder="Enter email address"
+                               required>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Enter secure password"
+                               required>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus me-2"></i>Create Super Admin
+                        </button>
+                        <a href="{{ url_for('superadmin.admins') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Warning Card -->
+        <div class="card mt-4 bg-warning text-dark border-0">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                    <div>
+                        <h6 class="mb-1">Important Security Notice</h6>
+                        <p class="mb-0">
+                            Super Admin accounts have full system access including user management, 
+                            system configuration, and administrative functions. Only create accounts 
+                            for trusted individuals who need this level of access.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Super Admin Capabilities -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="fas fa-list-check me-2"></i>Super Admin Capabilities
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Create and manage admin accounts
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                System-wide user management
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Access to all system logs
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Approve/reject all requests
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                System configuration access
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Full content moderation
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.page-header {
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.card.shadow-lg {
+    border: none;
+    border-radius: 1rem;
+}
+
+.form-control:focus {
+    transform: translateY(-1px);
+}
+
+.btn {
+    font-weight: 500;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+</style>
+{% endblock %} 

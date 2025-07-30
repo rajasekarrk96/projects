@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}Super Admin Dashboard - News Portal{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Super Admin Dashboard</h1>
+    
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">Admins</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ admin_count }}</h5>
+                    <p class="card-text">Total admin accounts</p>
+                    <a href="{{ url_for('superadmin.admins') }}" class="btn btn-light btn-sm">Manage Admins</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3">
+                <div class="card-header">Publishers</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ publisher_count }}</h5>
+                    <p class="card-text">Total publisher accounts</p>
+                    <a href="{{ url_for('superadmin.publishers') }}" class="btn btn-light btn-sm">Manage Publishers</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-info mb-3">
+                <div class="card-header">Users</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ user_count }}</h5>
+                    <p class="card-text">Total regular users</p>
+                    <a href="{{ url_for('superadmin.users') }}" class="btn btn-light btn-sm">Manage Users</a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3">
+                <div class="card-header">Pending Approvals</div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ pending_approvals }}</h5>
+                    <p class="card-text">Requests awaiting approval</p>
+                    <a href="{{ url_for('superadmin.approvals') }}" class="btn btn-light btn-sm">View Approvals</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="list-group">
+                        <a href="{{ url_for('superadmin.create_admin') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-plus"></i> Create New Admin Account
+                        </a>
+                        <a href="{{ url_for('superadmin.approvals') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-check-circle"></i> Process Approval Requests
+                        </a>
+                        <a href="{{ url_for('superadmin.articles') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-newspaper"></i> Manage Articles
+                        </a>
+                        <a href="{{ url_for('superadmin.logs') }}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-history"></i> View System Logs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_logs %}
+                    <div class="list-group">
+                        {% for log in recent_logs %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ log.action }}</h6>
+                                <small>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <p class="mb-1">{{ log.details }}</p>
+                            <small>By: {{ log.user.username }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('superadmin.logs') }}" class="btn btn-outline-primary btn-sm">View All Logs</a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No recent activity found.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

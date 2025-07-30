@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Pending Comments{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Pending Comments</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Comments Awaiting Approval</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            {% if comments %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Article</th>
+                            <th>Author</th>
+                            <th>Content</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for comment in comments %}
+                        <tr>
+                            <td>{{ comment.id }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.view_article', id=comment.article_id) }}">
+                                    {{ comment.article.title }}
+                                </a>
+                            </td>
+                            <td>{{ comment.author.username }}</td>
+                            <td>{{ comment.content|truncate(50) }}</td>
+                            <td>{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="#" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to approve this comment?')">
+                                        Approve
+                                    </a>
+                                    <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to reject this comment?')">
+                                        Reject
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No pending comments found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

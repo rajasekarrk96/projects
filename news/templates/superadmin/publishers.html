@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Publishers - Super Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Manage Publishers</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Publisher Accounts</h5>
+        </div>
+        <div class="card-body">
+            {% if publishers %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Approved</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for publisher in publishers %}
+                        <tr>
+                            <td>{{ publisher.id }}</td>
+                            <td>{{ publisher.username }}</td>
+                            <td>{{ publisher.email }}</td>
+                            <td>
+                                <span class="badge {% if publisher.is_active %}badge-success{% else %}badge-danger{% endif %}">
+                                    {{ 'Active' if publisher.is_active else 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if publisher.is_approved %}badge-success{% else %}badge-warning{% endif %}">
+                                    {{ 'Approved' if publisher.is_approved else 'Pending' }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{{ url_for('superadmin.toggle_user_status', id=publisher.id) }}" class="btn btn-sm {% if publisher.is_active %}btn-warning{% else %}btn-success{% endif %}">
+                                    {{ 'Deactivate' if publisher.is_active else 'Activate' }}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No publisher accounts found.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

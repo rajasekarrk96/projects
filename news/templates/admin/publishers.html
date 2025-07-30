@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Publishers{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Publisher Management</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">All Publishers</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for publisher in publishers %}
+                        <tr>
+                            <td>{{ publisher.id }}</td>
+                            <td>{{ publisher.username }}</td>
+                            <td>{{ publisher.email }}</td>
+                            <td>
+                                {% if publisher.is_active and publisher.is_approved %}
+                                <span class="badge bg-success">Active</span>
+                                {% elif not publisher.is_active %}
+                                <span class="badge bg-danger">Inactive</span>
+                                {% elif not publisher.is_approved %}
+                                <span class="badge bg-warning">Pending Approval</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if publisher.is_active %}
+                                <a href="{{ url_for('admin.flag_user', id=publisher.id) }}" class="btn btn-sm btn-warning" onclick="return confirm('Are you sure you want to flag this publisher for deactivation?')">
+                                    Flag for Deactivation
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

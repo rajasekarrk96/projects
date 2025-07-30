@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Approval Requests - Super Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Approval Requests</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header">
+            <h5 class="mb-0">Pending Approval Requests</h5>
+        </div>
+        <div class="card-body">
+            {% if approval_requests %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Requester</th>
+                            <th>Target</th>
+                            <th>Action Type</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for request in approval_requests %}
+                        <tr>
+                            <td>{{ request.id }}</td>
+                            <td>{{ request.requester.username }}</td>
+                            <td>{{ request.target_table }} #{{ request.target_id }}</td>
+                            <td>
+                                <span class="badge {% if request.action_type == 'create' %}badge-success{% elif request.action_type == 'update' %}badge-info{% elif request.action_type == 'delete' %}badge-danger{% else %}badge-secondary{% endif %}">
+                                    {{ request.action_type }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if request.status == 'pending' %}badge-warning{% elif request.status == 'approved' %}badge-success{% elif request.status == 'rejected' %}badge-danger{% endif %}">
+                                    {{ request.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if request.status == 'pending' %}
+                                <div class="btn-group" role="group">
+                                    <form method="POST" action="{{ url_for('superadmin.process_approval', request_id=request.id) }}" style="display: inline;">
+                                        <input type="hidden" name="status" value="approved">
+                                        <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                    </form>
+                                    <form method="POST" action="{{ url_for('superadmin.process_approval', request_id=request.id) }}" style="display: inline;">
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                </div>
+                                {% else %}
+                                <span class="text-muted">Processed</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-muted">No approval requests found.</p>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{{ url_for('superadmin.dashboard') }}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

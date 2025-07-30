@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}Pending Articles{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Pending Articles</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Articles Awaiting Approval</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            {% if articles %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for article in articles %}
+                        <tr>
+                            <td>{{ article.id }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.view_article', id=article.id) }}">
+                                    {{ article.title }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if article.is_anonymous %}
+                                <em>Anonymous</em>
+                                {% else %}
+                                {{ article.author.username }}
+                                {% endif %}
+                            </td>
+                            <td>{{ article.category.name }}</td>
+                            <td>{{ article.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('admin.view_article', id=article.id) }}" class="btn btn-sm btn-info">View</a>
+                                    <a href="{{ url_for('admin.approve_article', id=article.id) }}" class="btn btn-sm btn-success" onclick="return confirm('Are you sure you want to approve this article?')">Approve</a>
+                                    <a href="{{ url_for('admin.reject_article', id=article.id) }}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to reject this article?')">Reject</a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                No pending articles found.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

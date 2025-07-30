@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>User Management</h1>
+    
+    <div class="card mt-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">All Users</h5>
+            <a href="{{ url_for('admin.dashboard') }}" class="btn btn-sm btn-secondary">Back to Dashboard</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.role.name }}</td>
+                            <td>
+                                {% if user.is_active and user.is_approved %}
+                                <span class="badge bg-success">Active</span>
+                                {% elif not user.is_active %}
+                                <span class="badge bg-danger">Inactive</span>
+                                {% elif not user.is_approved %}
+                                <span class="badge bg-warning">Pending Approval</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if user.is_active and user.role.name != 'superadmin' %}
+                                <a href="{{ url_for('admin.flag_user', id=user.id) }}" class="btn btn-sm btn-warning" onclick="return confirm('Are you sure you want to flag this user for deactivation?')">
+                                    Flag for Deactivation
+                                </a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

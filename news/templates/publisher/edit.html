@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Article{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Edit Article</h1>
+    
+    <form method="POST" enctype="multipart/form-data">
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ article.title }}" required>
+        </div>
+        
+        <div class="mb-3">
+            <label for="category_id" class="form-label">Category</label>
+            <select class="form-select" id="category_id" name="category_id" required>
+                <option value="">Select a category</option>
+                {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == article.category_id %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea class="form-control" id="content" name="content" rows="10" required>{{ article.content }}</textarea>
+        </div>
+        
+        <div class="mb-3">
+            <label for="media" class="form-label">Upload Media (optional)</label>
+            <input type="file" class="form-control" id="media" name="media">
+            <div class="form-text">Upload new media or leave empty to keep existing media.</div>
+            
+            {% if article.media_files %}
+            <div class="mt-2">
+                <h5>Current Media Files:</h5>
+                <div class="row">
+                    {% for media in article.media_files %}
+                    <div class="col-md-3 mb-2">
+                        <img src="{{ media.file_path }}" class="img-thumbnail" alt="Media file">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="is_anonymous" name="is_anonymous" {% if article.is_anonymous %}checked{% endif %}>
+            <label class="form-check-label" for="is_anonymous">Publish Anonymously</label>
+            <div class="form-text">If checked, your name will not be displayed with the article.</div>
+        </div>
+        
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">Update Article</button>
+            <a href="{{ url_for('publisher.dashboard') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
