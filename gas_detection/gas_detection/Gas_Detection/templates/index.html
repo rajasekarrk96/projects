@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SafeGuard Pro | Industrial IoT Gas Detection & Environmental Monitoring System</title>
+    <link rel="icon" href="/static/favicon.ico">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/professional.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" aria-label="Main Navigation">
+        <div class="sidebar-logo">
+            <img src="/static/logo-placeholder.png" alt="SafeGuard Pro Logo" class="logo-img">
+            <span>SafeGuard Pro</span>
+    </div>
+        <nav>
+            <ul class="sidebar-links">
+                <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#monitoring"><i class="fas fa-chart-line"></i> Monitoring</a></li>
+                <li><a href="#alerts"><i class="fas fa-exclamation-triangle"></i> Alerts</a></li>
+                <li><a href="#settings" id="settings-link"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#reports"><i class="fas fa-file-alt"></i> Reports</a></li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="#" class="sidebar-social"><i class="fab fa-linkedin"></i></a>
+            <a href="#" class="sidebar-social"><i class="fab fa-github"></i></a>
+            <a href="#" class="sidebar-social"><i class="fab fa-twitter"></i></a>
+        </div>
+    </aside>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <button class="sidebar-toggle" aria-label="Open navigation"><i class="fas fa-bars"></i></button>
+            </div>
+            <div class="header-center">
+                <h1 class="hero-title">SafeGuard Pro Dashboard</h1>
+                <p class="header-subtitle">Real-time Environmental Monitoring & Safety Control</p>
+            </div>
+            <div class="header-right">
+                <button class="control-btn" id="dark-mode-toggle" title="Toggle dark mode" style="margin-right:1em;"><i class="fas fa-moon"></i></button>
+                <div class="profile-dropdown" tabindex="0" aria-haspopup="true" aria-expanded="false" id="profile-dropdown">
+                    <img src="/static/profile-placeholder.png" alt="User Profile" class="profile-avatar" id="profile-avatar-img">
+                    <span class="profile-name" id="profile-name-display">Admin</span>
+                    <i class="fas fa-chevron-down"></i>
+                    <ul class="profile-menu">
+                        <li><a href="#profile" id="profile-link">Profile</a></li>
+                        <li><a href="#settings" id="settings-link-dropdown">Settings</a></li>
+                        <li><a href="#logout" id="logout-link">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+    </header>
+        <!-- Hero Section with Enhanced Design -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Enterprise Grade Security</span>
+                </div>
+                <h2 class="hero-subtitle">Advanced IoT Gas Detection & Safety Control System</h2>
+                <p class="hero-desc">Monitor, analyze, and act on real-time environmental data with enterprise-grade precision and reliability.</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Uptime</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">24/7</span>
+                        <span class="stat-label">Monitoring</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">Real-time</span>
+                        <span class="stat-label">Alerts</span>
+                    </div>
+                </div>
+            </div>
+            <svg class="hero-wave" viewBox="0 0 1440 320"><path fill="#667eea" fill-opacity="0.15" d="M0,160L60,170.7C120,181,240,203,360,197.3C480,192,600,160,720,133.3C840,107,960,85,1080,101.3C1200,117,1320,171,1380,197.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path></svg>
+        </section>
+        <!-- Dashboard Grid -->
+        <section class="dashboard-grid" id="dashboard">
+            <!-- Gas Sensor Card -->
+            <div class="card animate-card">
+                <div class="card-icon gas-sensor">
+                    <i class="fas fa-smog"></i>
+                </div>
+                <h3><i class="fas fa-wind"></i> Gas Concentration</h3>
+                <div class="sensor-value" id="gas-value">
+                    12.5<span class="sensor-unit">ppm</span>
+                </div>
+                <div class="status-indicator status-glow status-warning">
+                    Moderate Levels
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 25%;"></div>
+                </div>
+            </div>
+            <!-- Temperature Card -->
+            <div class="card animate-card">
+                <div class="card-icon temperature">
+                    <i class="fas fa-thermometer-half"></i>
+                </div>
+                <h3><i class="fas fa-temperature-high"></i> Temperature</h3>
+                <div class="sensor-value" id="temp-value">
+                    23.2<span class="sensor-unit">°C</span>
+                </div>
+                <div class="status-indicator status-glow status-safe">
+                    Optimal Range
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 46%;"></div>
+                </div>
+            </div>
+            <!-- Humidity Card -->
+            <div class="card animate-card">
+                <div class="card-icon humidity">
+                    <i class="fas fa-tint"></i>
+                </div>
+                <h3><i class="fas fa-droplet"></i> Humidity</h3>
+                <div class="sensor-value" id="humidity-value">
+                    58<span class="sensor-unit">%</span>
+                </div>
+                <div class="status-indicator status-glow status-safe">
+                    Comfortable
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 58%;"></div>
+                </div>
+            </div>
+            <!-- Pressure Card -->
+            <div class="card animate-card">
+                <div class="card-icon pressure">
+                    <i class="fas fa-gauge-high"></i>
+                </div>
+                <h3><i class="fas fa-compress-arrows-alt"></i> Air Pressure</h3>
+                <div class="sensor-value" id="pressure-value">
+                    1013<span class="sensor-unit">hPa</span>
+                </div>
+                <div class="status-indicator status-glow status-safe">
+                    Normal Levels
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 75%;"></div>
+                </div>
+            </div>
+        </section>
+        <!-- Chart Section -->
+        <section class="chart-container" id="monitoring">
+            <h2><i class="fas fa-chart-line"></i> Real-time Data Trends</h2>
+            <div style="text-align:right;font-size:0.95em;color:#888;margin-bottom:0.5em;">
+                Last updated: <span id="last-updated">--:--:--</span>
+            </div>
+            <div style="display:flex;gap:0.5em;justify-content:flex-end;margin-bottom:0.5em;">
+                <button class="control-btn" id="export-csv-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
+                <button class="control-btn" id="export-pdf-btn"><i class="fas fa-file-pdf"></i> Export PDF</button>
+            </div>
+            <canvas id="realtimeChart" width="600" height="300" aria-label="Real-time Data Chart" role="img"></canvas>
+        </section>
+        <!-- Alert Section -->
+        <section class="alert-section" id="alerts">
+            <h2><i class="fas fa-bell"></i> System Alerts & Notifications</h2>
+            <div id="custom-alerts-list"></div>
+            <div class="alert-item alert-low">
+                <i class="fas fa-check-circle" style="color: #38a169; margin-right: 1rem;"></i>
+                <div>
+                    <strong>System Status:</strong> All sensors operating normally - Last checked: 2 minutes ago
+                </div>
+            </div>
+            <div class="alert-item alert-medium">
+                <i class="fas fa-exclamation-triangle" style="color: #d69e2e; margin-right: 1rem;"></i>
+                <div>
+                    <strong>Humidity Warning:</strong> Humidity levels approaching upper threshold (>65%) - Monitor closely
+                </div>
+            </div>
+            <div class="alert-item alert-low">
+                <i class="fas fa-info-circle" style="color: #3182ce; margin-right: 1rem;"></i>
+                <div>
+                    <strong>Maintenance:</strong> Next calibration scheduled for next week - All sensors functioning properly
+                </div>
+            </div>
+        </section>
+        <!-- Control Panel -->
+        <section class="control-panel">
+            <button class="control-btn" onclick="showToast('Monitoring started!')">
+                <i class="fas fa-play"></i> Start Monitoring
+            </button>
+            <button class="control-btn" onclick="showToast('Data exported!')">
+                <i class="fas fa-download"></i> Export Data
+            </button>
+            <button class="control-btn" onclick="showToast('Calibration in progress...')">
+                <i class="fas fa-cog"></i> Calibrate Sensors
+            </button>
+            <button class="control-btn" onclick="openSettingsModal()">
+                <i class="fas fa-bell"></i> Alert Settings
+            </button>
+        </section>
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title" tabindex="-1">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeSettingsModal()" aria-label="Close settings">&times;</span>
+                <h2 id="settings-modal-title">Settings</h2>
+                <form>
+                    <label for="threshold">Gas Threshold (ppm):</label>
+                    <input type="number" id="threshold" name="threshold" min="0" max="1000" value="50">
+                    <label for="temp-threshold">Temperature Threshold (°C):</label>
+                    <input type="number" id="temp-threshold" name="temp-threshold" min="-50" max="100" value="40">
+                    <label for="humidity-threshold">Humidity Threshold (%):</label>
+                    <input type="number" id="humidity-threshold" name="humidity-threshold" min="0" max="100" value="70">
+                    <label for="pressure-threshold">Pressure Threshold (hPa):</label>
+                    <input type="number" id="pressure-threshold" name="pressure-threshold" min="800" max="1200" value="1020">
+                    <div style="margin:0.75em 0;">
+                        <input type="checkbox" id="enable-notifications" name="enable-notifications">
+                        <label for="enable-notifications" style="display:inline;">Enable browser notifications for alerts</label>
+                    </div>
+                    <label for="email">Notification Email:</label>
+                    <input type="email" id="email" name="email" placeholder="you@example.com">
+                    <button type="submit" class="control-btn">Save</button>
+                </form>
+            </div>
+    </div>
+        <!-- Historical Data Modal -->
+        <div id="historical-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="historical-modal-title" tabindex="-1" style="display:none;">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeHistoricalModal()" aria-label="Close historical data">&times;</span>
+                <h2 id="historical-modal-title">Historical Data</h2>
+                <form id="historical-form" style="margin-bottom:1em;display:flex;gap:1em;align-items:center;">
+                    <label for="start-date">From:</label>
+                    <input type="date" id="start-date" name="start-date" required>
+                    <label for="end-date">To:</label>
+                    <input type="date" id="end-date" name="end-date" required>
+                    <button type="submit" class="control-btn">Show</button>
+                </form>
+                <div style="overflow-x:auto;">
+                    <table id="historical-table" style="width:100%;border-collapse:collapse;margin-bottom:1em;">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Gas (ppm)</th>
+                                <th>Temperature (°C)</th>
+                                <th>Humidity (%)</th>
+                                <th>Pressure (hPa)</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+                <button class="control-btn" id="export-historical-csv"><i class="fas fa-file-csv"></i> Export CSV</button>
+            </div>
+        </div>
+        <!-- Button to open historical data modal -->
+        <button class="control-btn" id="open-historical-btn" style="position:fixed;bottom:2em;right:2em;z-index:1000;"><i class="fas fa-history"></i> Historical Data</button>
+        <!-- Toast Notification -->
+        <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>© 2024 SafeGuard Pro - Industrial IoT Gas Detection System</strong></p>
+        <p>Developed for Professional Environmental Monitoring | Version 2.1.0</p>
+            <div class="footer-links">
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="mailto:contact@safeguardpro.com"><i class="fas fa-envelope"></i></a>
+            </div>
+        <p><i class="fas fa-shield-alt"></i> Ensuring Safety Through Advanced Technology</p>
+    </footer>
+    </main>
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title" tabindex="-1" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLoginModal()" aria-label="Close login">&times;</span>
+            <h2 id="login-modal-title">Login</h2>
+            <form id="login-form">
+                <label for="login-username">Username:</label>
+                <input type="text" id="login-username" name="login-username" required>
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="login-password" required>
+                <button type="submit" class="control-btn">Login</button>
+            </form>
+        </div>
+    </div>
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title" tabindex="-1" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeProfileModal()" aria-label="Close profile">&times;</span>
+            <h2 id="profile-modal-title">Profile</h2>
+            <form id="profile-form">
+                <label for="profile-name">Name:</label>
+                <input type="text" id="profile-name" name="profile-name" required>
+                <label for="profile-email">Email:</label>
+                <input type="email" id="profile-email" name="profile-email" required>
+                <label for="profile-image">Profile Image:</label>
+                <input type="file" id="profile-image" name="profile-image" accept="image/*">
+                <div style="margin:0.5em 0;">
+                    <img id="profile-image-preview" src="/static/profile-placeholder.png" alt="Profile Preview" style="width:64px;height:64px;border-radius:50%;object-fit:cover;">
+                </div>
+                <button type="submit" class="control-btn">Save</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Sidebar toggle for mobile
+        document.querySelector('.sidebar-toggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('sidebar-open');
+        });
+        // Profile dropdown
+        const profileDropdown = document.querySelector('.profile-dropdown');
+        profileDropdown.addEventListener('click', function(e) {
+            this.classList.toggle('open');
+        });
+        profileDropdown.addEventListener('blur', function() {
+            this.classList.remove('open');
+        });
+        // Close profile dropdown on Escape
+        profileDropdown.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') this.classList.remove('open');
+        });
+        // Animate cards on load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.animate-card').forEach((card, i) => {
+                setTimeout(() => card.classList.add('card-visible'), 200 + i * 150);
+            });
+            // Animate progress bars
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 500);
+            });
+            // Chart.js demo
+            const ctx = document.getElementById('realtimeChart').getContext('2d');
+            let chartLabels = Array.from({length: 7}, (_, i) => {
+                const d = new Date(Date.now() - (6 - i) * 5 * 60 * 1000);
+                return d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            });
+            let chartData = [12, 13, 12.5, 14, 13.5, 12.8, 12.5];
+            const realtimeChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Gas Concentration (ppm)',
+                        data: chartData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102,126,234,0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+            // Load and save thresholds
+            function getThresholds() {
+                return JSON.parse(localStorage.getItem('thresholds')) || {
+                    gas: 50,
+                    temp: 40,
+                    humidity: 70,
+                    pressure: 1020
+                };
+            }
+            function setThresholds(th) {
+                localStorage.setItem('thresholds', JSON.stringify(th));
+            }
+            // Populate settings modal with thresholds
+            function populateThresholdInputs() {
+                const th = getThresholds();
+                document.getElementById('threshold').value = th.gas;
+                document.getElementById('temp-threshold').value = th.temp;
+                document.getElementById('humidity-threshold').value = th.humidity;
+                document.getElementById('pressure-threshold').value = th.pressure;
+            }
+            function getNotificationSetting() {
+                return localStorage.getItem('enableNotifications') === '1';
+            }
+            function setNotificationSetting(val) {
+                localStorage.setItem('enableNotifications', val ? '1' : '0');
+            }
+            function populateNotificationInput() {
+                document.getElementById('enable-notifications').checked = getNotificationSetting();
+            }
+            // On open settings modal, populate values
+            const openSettingsModalOrig = openSettingsModal;
+            window.openSettingsModal = function() {
+                openSettingsModalOrig();
+                populateThresholdInputs();
+                populateNotificationInput();
+            };
+            // Save thresholds on settings form submit
+            document.querySelector('#settings-modal form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const threshold = parseFloat(document.getElementById('threshold').value);
+                const tempTh = parseFloat(document.getElementById('temp-threshold').value);
+                const humTh = parseFloat(document.getElementById('humidity-threshold').value);
+                const presTh = parseFloat(document.getElementById('pressure-threshold').value);
+                const email = document.getElementById('email').value;
+                if (!email || !email.includes('@')) {
+                    showToast('Please enter a valid email.');
+                    document.getElementById('email').focus();
+                    return;
+                }
+                setThresholds({ gas: threshold, temp: tempTh, humidity: humTh, pressure: presTh });
+                showToast('Settings saved!');
+                closeSettingsModal();
+            });
+            // Custom alert logic
+            function checkCustomAlerts(gas, temp, humidity, pressure) {
+                const th = getThresholds();
+                const alerts = [];
+                if (gas > th.gas) alerts.push(`Gas concentration (${gas} ppm) exceeds threshold (${th.gas} ppm)`);
+                if (temp > th.temp) alerts.push(`Temperature (${temp}°C) exceeds threshold (${th.temp}°C)`);
+                if (humidity > th.humidity) alerts.push(`Humidity (${humidity}%) exceeds threshold (${th.humidity}%)`);
+                if (pressure > th.pressure) alerts.push(`Pressure (${pressure} hPa) exceeds threshold (${th.pressure} hPa)`);
+                return alerts;
+            }
+            function showBrowserNotification(msg) {
+                if (getNotificationSetting() && window.Notification && Notification.permission === 'granted') {
+                    new Notification('SafeGuard Pro Alert', { body: msg, icon: '/static/logo-placeholder.png' });
+                }
+            }
+            function updateCustomAlertsDisplay(alerts) {
+                const list = document.getElementById('custom-alerts-list');
+                list.innerHTML = '';
+                if (alerts.length) {
+                    alerts.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.className = 'alert-item alert-medium';
+                        div.innerHTML = `<i class='fas fa-exclamation-triangle' style='color:#d69e2e;margin-right:1rem;'></i><div><strong>Custom Alert:</strong> ${msg}</div>`;
+                        list.appendChild(div);
+                    });
+                }
+            }
+            // Patch updateLiveData to check alerts
+            const updateLiveDataOrig = updateLiveData;
+            window.updateLiveData = function() {
+                updateLiveDataOrig();
+                // Get current values
+                const gas = parseFloat(document.getElementById('gas-value').textContent);
+                const temp = parseFloat(document.getElementById('temp-value').textContent);
+                const humidity = parseFloat(document.getElementById('humidity-value').textContent);
+                const pressure = parseFloat(document.getElementById('pressure-value').textContent);
+                const alerts = checkCustomAlerts(gas, temp, humidity, pressure);
+                updateCustomAlertsDisplay(alerts);
+                if (alerts.length) {
+                    showToast(alerts[0]);
+                    showBrowserNotification(alerts[0]);
+                }
+            };
+            // Live data simulation
+            function randomInRange(min, max, decimals=1) {
+                return +(Math.random() * (max - min) + min).toFixed(decimals);
+            }
+            function updateLiveData() {
+                // Simulate new sensor values
+                const gas = randomInRange(10, 20);
+                const temp = randomInRange(20, 30);
+                const humidity = randomInRange(40, 70, 0);
+                const pressure = randomInRange(1000, 1025, 0);
+                document.getElementById('gas-value').innerHTML = gas + '<span class="sensor-unit">ppm</span>';
+                document.getElementById('temp-value').innerHTML = temp + '<span class="sensor-unit">°C</span>';
+                document.getElementById('humidity-value').innerHTML = humidity + '<span class="sensor-unit">%</span>';
+                document.getElementById('pressure-value').innerHTML = pressure + '<span class="sensor-unit">hPa</span>';
+                // Update chart
+                const now = new Date();
+                chartLabels.push(now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'}));
+                chartLabels.shift();
+                chartData.push(gas);
+                chartData.shift();
+                realtimeChart.data.labels = chartLabels;
+                realtimeChart.data.datasets[0].data = chartData;
+                realtimeChart.update();
+                // Update last updated timestamp
+                document.getElementById('last-updated').textContent = now.toLocaleTimeString();
+            }
+            updateLiveData();
+            setInterval(updateLiveData, 5000);
+            // Smooth scroll for sidebar navigation
+            document.querySelectorAll('.sidebar-links a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    const href = this.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        e.preventDefault();
+                        const section = document.querySelector(href);
+                        if (section) {
+                            section.scrollIntoView({ behavior: 'smooth' });
+                        }
+                        // Close sidebar on mobile after click
+                        document.querySelector('.sidebar').classList.remove('sidebar-open');
+                    }
+                });
+            });
+            // Placeholder for social/footer links
+            document.querySelectorAll('.sidebar-social, .footer-links a').forEach(link => {
+                if (link.getAttribute('href') === '#') {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        showToast('Coming soon!');
+                    });
+                }
+            });
+            // Export CSV for current sensor and chart data
+            document.getElementById('export-csv-btn').addEventListener('click', function() {
+                try {
+                    const gas = document.getElementById('gas-value').textContent.trim();
+                    const temp = document.getElementById('temp-value').textContent.trim();
+                    const humidity = document.getElementById('humidity-value').textContent.trim();
+                    const pressure = document.getElementById('pressure-value').textContent.trim();
+                    let csv = 'Time,Gas (ppm)\n';
+                    for (let i = 0; i < chartLabels.length; i++) {
+                        csv += `${chartLabels[i]},${chartData[i]}\n`;
+                    }
+                    csv += '\nCurrent Values\n';
+                    csv += `Gas,${gas}\nTemperature,${temp}\nHumidity,${humidity}\nPressure,${pressure}\n`;
+                    const blob = new Blob([csv], {type: 'text/csv'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'dashboard_data.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('CSV exported!');
+                } catch (err) {
+                    showToast('CSV export failed.');
+                }
+            });
+            // Export PDF for dashboard view
+            document.getElementById('export-pdf-btn').addEventListener('click', function() {
+                try {
+                    if (!window.html2canvas || !window.jspdf) {
+                        showToast('Loading PDF libraries... Please try again.');
+                        const script1 = document.createElement('script');
+                        script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+                        document.body.appendChild(script1);
+                        const script2 = document.createElement('script');
+                        script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                        document.body.appendChild(script2);
+                        script2.onload = () => showToast('PDF libraries loaded. Try export again.');
+                        return;
+                    }
+                    showToast('Exporting PDF...');
+                    const mainContent = document.querySelector('.main-content');
+                    window.html2canvas(mainContent).then(canvas => {
+                        const imgData = canvas.toDataURL('image/png');
+                        const pdf = new window.jspdf.jsPDF({orientation: 'landscape', unit: 'pt', format: 'a4'});
+                        const pageWidth = pdf.internal.pageSize.getWidth();
+                        const pageHeight = pdf.internal.pageSize.getHeight();
+                        const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
+                        const imgWidth = canvas.width * ratio;
+                        const imgHeight = canvas.height * ratio;
+                        pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                        pdf.save('dashboard.pdf');
+                        showToast('PDF exported!');
+                    });
+                } catch (err) {
+                    showToast('PDF export failed.');
+                }
+            });
+            // Historical Data Modal logic
+            function openHistoricalModal() {
+                document.getElementById('historical-modal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                // Set default date range (last 7 days)
+                const today = new Date();
+                const prior = new Date(today.getTime() - 6 * 24 * 60 * 60 * 1000);
+                document.getElementById('end-date').value = today.toISOString().slice(0,10);
+                document.getElementById('start-date').value = prior.toISOString().slice(0,10);
+                populateHistoricalTable(prior, today);
+            }
+            function closeHistoricalModal() {
+                document.getElementById('historical-modal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            document.getElementById('open-historical-btn').addEventListener('click', openHistoricalModal);
+            // Accessibility: close modal on Escape
+            document.addEventListener('keydown', function(e) {
+                if (document.getElementById('historical-modal').style.display === 'block' && e.key === 'Escape') closeHistoricalModal();
+            });
+            // Simulate historical data
+            function generateHistoricalData(start, end) {
+                const data = [];
+                let d = new Date(start);
+                while (d <= end) {
+                    for (let h = 0; h < 24; h += 4) { // every 4 hours
+                        data.push({
+                            date: d.toISOString().slice(0,10),
+                            time: (h+':00').padStart(5,'0'),
+                            gas: randomInRange(10, 20),
+                            temp: randomInRange(20, 30),
+                            humidity: randomInRange(40, 70, 0),
+                            pressure: randomInRange(1000, 1025, 0)
+                        });
+                    }
+                    d.setDate(d.getDate() + 1);
+                }
+                return data;
+            }
+            function populateHistoricalTable(start, end) {
+                const tbody = document.querySelector('#historical-table tbody');
+                tbody.innerHTML = '';
+                const data = generateHistoricalData(start, end);
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${row.date}</td><td>${row.time}</td><td>${row.gas}</td><td>${row.temp}</td><td>${row.humidity}</td><td>${row.pressure}</td>`;
+                    tbody.appendChild(tr);
+                });
+                // Store for export
+                window._historicalData = data;
+            }
+            document.getElementById('historical-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const start = new Date(document.getElementById('start-date').value);
+                const end = new Date(document.getElementById('end-date').value);
+                if (start > end) {
+                    showToast('Start date must be before end date.');
+                    return;
+                }
+                populateHistoricalTable(start, end);
+            });
+            // Export historical data as CSV
+            document.getElementById('export-historical-csv').addEventListener('click', function() {
+                try {
+                    const data = window._historicalData || [];
+                    let csv = 'Date,Time,Gas (ppm),Temperature (°C),Humidity (%),Pressure (hPa)\n';
+                    data.forEach(row => {
+                        csv += `${row.date},${row.time},${row.gas},${row.temp},${row.humidity},${row.pressure}\n`;
+                    });
+                    const blob = new Blob([csv], {type: 'text/csv'});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'historical_data.csv';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    showToast('Historical CSV exported!');
+                } catch (err) {
+                    showToast('Historical CSV export failed.');
+                }
+            });
+            // User management state
+            let user = JSON.parse(localStorage.getItem('user')) || null;
+            function updateUserUI() {
+                const profileDropdown = document.getElementById('profile-dropdown');
+                if (user) {
+                    profileDropdown.style.display = '';
+                    document.getElementById('profile-name-display').textContent = user.name || 'User';
+                    document.getElementById('profile-avatar-img').src = user.image || '/static/profile-placeholder.png';
+                } else {
+                    profileDropdown.style.display = 'none';
+                    // Show login button in header if logged out
+                    if (!document.getElementById('login-header-btn')) {
+                        const headerRight = document.querySelector('.header-right');
+                        const btn = document.createElement('button');
+                        btn.className = 'control-btn';
+                        btn.id = 'login-header-btn';
+                        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                        btn.onclick = openLoginModal;
+                        headerRight.appendChild(btn);
+                    }
+                }
+                // Remove login button if logged in
+                if (user && document.getElementById('login-header-btn')) {
+                    document.getElementById('login-header-btn').remove();
+                }
+            }
+            // Login modal logic
+            function openLoginModal() {
+                document.getElementById('login-modal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                document.getElementById('login-username').focus();
+            }
+            function closeLoginModal() {
+                document.getElementById('login-modal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            document.getElementById('login-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+                if (!username || !password) {
+                    showToast('Please enter username and password.');
+                    return;
+                }
+                // Simulate login
+                user = { name: username, email: username + '@example.com' };
+                localStorage.setItem('user', JSON.stringify(user));
+                updateUserUI();
+                closeLoginModal();
+                showToast('Logged in as ' + username);
+                // Prompt for photo if not set
+                setTimeout(function() {
+                    if (!user.image) {
+                        document.getElementById('profile-modal').style.display = 'block';
+                        document.body.style.overflow = 'hidden';
+                        document.getElementById('profile-name').value = user.name || '';
+                        document.getElementById('profile-email').value = user.email || '';
+                        document.getElementById('profile-image-preview').src = user.image || '/static/profile-placeholder.png';
+                        document.getElementById('profile-image').focus();
+                        showToast('Upload a profile photo to complete your account!');
+                    }
+                }, 400);
+            });
+            // Logout logic
+            document.getElementById('logout-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                user = null;
+                localStorage.removeItem('user');
+                updateUserUI();
+                showToast('Logged out.');
+            });
+            // Profile modal logic
+            document.getElementById('profile-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (!user) return;
+                document.getElementById('profile-modal').style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                document.getElementById('profile-name').value = user.name || '';
+                document.getElementById('profile-email').value = user.email || '';
+                document.getElementById('profile-image-preview').src = user.image || '/static/profile-placeholder.png';
+            });
+            document.getElementById('profile-image').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        document.getElementById('profile-image-preview').src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            function closeProfileModal() {
+                document.getElementById('profile-modal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            document.getElementById('profile-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('profile-name').value.trim();
+                const email = document.getElementById('profile-email').value.trim();
+                const image = document.getElementById('profile-image-preview').src;
+                if (!name || !email || !email.includes('@')) {
+                    showToast('Please enter a valid name and email.');
+                    return;
+                }
+                user.name = name;
+                user.email = email;
+                user.image = image && !image.includes('profile-placeholder.png') ? image : '';
+                localStorage.setItem('user', JSON.stringify(user));
+                updateUserUI();
+                closeProfileModal();
+                showToast('Profile updated!');
+            });
+            // Accessibility: close modals on Escape
+            document.addEventListener('keydown', function(e) {
+                if (document.getElementById('login-modal').style.display === 'block' && e.key === 'Escape') closeLoginModal();
+                if (document.getElementById('profile-modal').style.display === 'block' && e.key === 'Escape') closeProfileModal();
+            });
+            // Initialize UI
+            updateUserUI();
+            // Dark mode logic
+            function setDarkMode(enabled) {
+                if (enabled) {
+                    document.body.classList.add('dark-mode');
+                    localStorage.setItem('darkMode', '1');
+                    document.getElementById('dark-mode-toggle').innerHTML = '<i class="fas fa-sun"></i>';
+                    document.getElementById('dark-mode-toggle').title = 'Switch to light mode';
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    localStorage.setItem('darkMode', '0');
+                    document.getElementById('dark-mode-toggle').innerHTML = '<i class="fas fa-moon"></i>';
+                    document.getElementById('dark-mode-toggle').title = 'Switch to dark mode';
+                }
+            }
+            // Initial mode
+            setDarkMode(localStorage.getItem('darkMode') === '1');
+            document.getElementById('dark-mode-toggle').addEventListener('click', function() {
+                setDarkMode(!document.body.classList.contains('dark-mode'));
+            });
+        }); // End DOMContentLoaded
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+        // Settings modal
+        function openSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            modal.style.display = 'block';
+            // Trap focus inside modal
+            const focusable = modal.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])');
+            if (focusable.length) focusable[0].focus();
+            document.body.style.overflow = 'hidden';
+        }
+        function closeSettingsModal() {
+            document.getElementById('settings-modal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        document.getElementById('settings-link').addEventListener('click', function(e) {
+            e.preventDefault();
+            openSettingsModal();
+        });
+        document.getElementById('settings-link-dropdown').addEventListener('click', function(e) {
+            e.preventDefault();
+            openSettingsModal();
+        });
+        // Accessibility: close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            const modal = document.getElementById('settings-modal');
+            if (modal.style.display === 'block' && e.key === 'Escape') closeSettingsModal();
+        });
+        // Trap focus in modal
+        document.getElementById('settings-modal').addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                const focusable = this.querySelectorAll('input, button, [tabindex]:not([tabindex="-1"])');
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey) {
+                    if (document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                } else {
+                    if (document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            }
+        });
+        // Settings form handler
+        document.querySelector('#settings-modal form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const threshold = document.getElementById('threshold').value;
+            const email = document.getElementById('email').value;
+            if (!email || !email.includes('@')) {
+                showToast('Please enter a valid email.');
+                document.getElementById('email').focus();
+                return;
+            }
+            showToast('Settings saved! Threshold: ' + threshold + ' ppm, Email: ' + email);
+            closeSettingsModal();
+        });
+    </script>
+</body>
+</html>

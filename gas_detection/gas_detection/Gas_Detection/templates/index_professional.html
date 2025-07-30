@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SafeGuard Pro | Industrial Gas Detection & Environmental Monitoring Dashboard</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #2563eb;
+      --secondary-color: #1e40af;
+      --success-color: #059669;
+      --danger-color: #dc2626;
+      --warning-color: #d97706;
+      --info-color: #0891b2;
+      --dark-color: #1f2937;
+      --light-color: #f8fafc;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--dark-color);
+      line-height: 1.6;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .navbar-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      flex-direction: column;
+    }
+
+    .logo i {
+      font-size: 2rem;
+    }
+
+    .logo-tagline {
+      font-size: 0.75rem;
+      font-weight: 400;
+      color: var(--secondary-color);
+      margin-top: -0.5rem;
+      text-align: center;
+    }
+
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 500;
+      font-size: 0.875rem;
+    }
+
+    .status-indicator.online {
+      background: rgba(5, 150, 105, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(5, 150, 105, 0.2);
+    }
+
+    .status-indicator.offline {
+      background: rgba(220, 38, 38, 0.1);
+      color: var(--danger-color);
+      border: 1px solid rgba(220, 38, 38, 0.2);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hero-section {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 3rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(10px);
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .hero-features {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      border-radius: 50px;
+      color: var(--primary-color);
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+
+    .feature-item:hover {
+      background: rgba(37, 99, 235, 0.15);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-item i {
+      font-size: 1rem;
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .dashboard-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-subtitle {
+      font-size: 1.125rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 400;
+    }
+
+    .alert-banner {
+      background: linear-gradient(135deg, var(--danger-color), #ef4444);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      display: none;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-lg);
+      animation: slideDown 0.3s ease-out;
+    }
+
+    .alert-banner.show {
+      display: flex;
+    }
+
+    .alert-banner i {
+      font-size: 1.5rem;
+      animation: pulse 2s infinite;
+    }
+
+    .main-status-card {
+      background: white;
+      border-radius: 20px;
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .main-status-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--info-color));
+    }
+
+    .status-icon-large {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .status-text-large {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .status-description {
+      font-size: 1.125rem;
+      color: #64748b;
+      margin-bottom: 1.5rem;
+    }
+
+    .status-safe {
+      color: var(--success-color);
+    }
+
+    .status-danger {
+      color: var(--danger-color);
+      animation: pulse 2s infinite;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.3s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .metric-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .metric-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .metric-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--dark-color);
+      margin-bottom: 0.25rem;
+    }
+
+    .metric-unit {
+      font-size: 0.875rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .metric-trend {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .trend-up {
+      color: var(--success-color);
+    }
+
+    .trend-down {
+      color: var(--danger-color);
+    }
+
+    .trend-stable {
+      color: #64748b;
+    }
+
+    .temperature-icon {
+      background: linear-gradient(135deg, #f59e0b, #f97316);
+      color: white;
+    }
+
+    .humidity-icon {
+      background: linear-gradient(135deg, #06b6d4, #0891b2);
+      color: white;
+    }
+
+    .gas-icon {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 15px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      height: 300px;
+    }
+
+    /* Enhanced Responsive Design */
+    @media (max-width: 1024px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+      }
+      .hero-features {
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar-content {
+        padding: 0 1rem;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .logo {
+        flex-direction: row;
+        gap: 0.5rem;
+      }
+      .logo-tagline {
+        display: none;
+      }
+      .container {
+        padding: 1rem;
+      }
+      .hero-section {
+        padding: 2rem 1rem;
+      }
+      .hero-features {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+      }
+      .feature-item {
+        width: 100%;
+        max-width: 250px;
+        justify-content: center;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      .chart-container {
+        height: 250px;
+        padding: 1rem;
+      }
+      .emergency-alert {
+        padding: 1rem;
+        margin: 1rem 0;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-section h1 {
+        font-size: 1.75rem;
+      }
+      .hero-badge {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+      }
+      .metric-card {
+        padding: 1rem;
+      }
+      .metric-value {
+        font-size: 1.75rem;
+      }
+      .chart-container {
+        height: 200px;
+        padding: 0.75rem;
+      }
+    }
+
+    .system-info {
+      background: white;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--border-color);
+    }
+
+    .system-info-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .system-info-title {
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    .info-value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--dark-color);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f4f6;
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+      
+      .dashboard-title {
+        font-size: 2rem;
+      }
+      
+      .main-status-card {
+        padding: 1.5rem;
+      }
+      
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .navbar-content {
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <div class="logo">
+        <i class="fas fa-shield-alt"></i>
+        <span>SafeGuard Pro</span>
+        <div class="logo-tagline">Industrial IoT Solutions</div>
+      </div>
+      <div id="connectionStatus" class="status-indicator online">
+        <i class="fas fa-circle"></i>
+        <span>System Online</span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Dashboard Header -->
+    <div class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-award"></i>
+          <span>Enterprise Grade Monitoring</span>
+        </div>
+        <h1>Industrial Gas Detection System</h1>
+        <p>Advanced real-time monitoring and safety control for industrial environments with enterprise-grade precision and reliability</p>
+        <div class="hero-features">
+          <div class="feature-item">
+            <i class="fas fa-clock"></i>
+            <span>24/7 Monitoring</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-bell"></i>
+            <span>Instant Alerts</span>
+          </div>
+          <div class="feature-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Alert Banner -->
+    <div id="alertBanner" class="alert-banner">
+      <i class="fas fa-exclamation-triangle"></i>
+      <div>
+        <strong>CRITICAL ALERT:</strong> Hazardous gas levels detected! Safety protocols activated.
+      </div>
+    </div>
+
+    <!-- Main Status Card -->
+    <div class="main-status-card">
+      <div id="mainStatusIcon" class="status-icon-large status-safe">
+        <i class="fas fa-shield-check"></i>
+      </div>
+      <div id="mainStatusText" class="status-text-large status-safe">ENVIRONMENT SAFE</div>
+      <div id="mainStatusDesc" class="status-description">All systems operational - No hazardous gases detected</div>
+      <div class="info-item">
+        <span class="info-label">Last Updated:</span>
+        <span id="lastUpdate" class="info-value">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- Metrics Grid -->
+    <div class="metrics-grid">
+      <!-- Temperature Card -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Temperature</span>
+          <div class="metric-icon temperature-icon">
+            <i class="fas fa-thermometer-half"></i>
+          </div>
+        </div>
+        <div class="metric-value" id="temperatureValue">--</div>
+        <div class="metric-unit">°C</div>
+        <div class="metric-trend trend-stable">
+          <i class="fas fa-minus"></i>
+          <span>Stable</span>
+        </div>
+      </div>
+
+      <!-- Humidity Card -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Humidity</span>
+          <div class="metric-icon humidity-icon">
+            <i class="fas fa-tint"></i>
+          </div>
+        </div>
+        <div class="metric-value" id="humidityValue">--</div>
+        <div class="metric-unit">%</div>
+        <div class="metric-trend trend-stable">
+          <i class="fas fa-minus"></i>
+          <span>Normal</span>
+        </div>
+      </div>
+
+      <!-- Gas Level Card -->
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-title">Gas Level</span>
+          <div class="metric-icon gas-icon">
+            <i class="fas fa-smog"></i>
+          </div>
+        </div>
+        <div class="metric-value" id="gasValue">--</div>
+        <div class="metric-unit">PPM</div>
+        <div class="metric-trend trend-stable" id="gasTrend">
+          <i class="fas fa-minus"></i>
+          <span>Safe Range</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Information -->
+    <div class="system-info">
+      <div class="system-info-header">
+        <i class="fas fa-cog"></i>
+        <span class="system-info-title">System Information</span>
+      </div>
+      <div class="info-grid">
+        <div class="info-item">
+          <span class="info-label">Device Status:</span>
+          <span class="info-value" id="deviceStatus">Online</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Sensor Type:</span>
+          <span class="info-value">MQ135 + DHT11</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Safety Threshold:</span>
+          <span class="info-value">800 PPM</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Alert System:</span>
+          <span class="info-value">SMS + Visual</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Relay Status:</span>
+          <span class="info-value" id="relayStatus">Standby</span>
+        </div>
+        <div class="info-item">
+          <span class="info-label">Uptime:</span>
+          <span class="info-value" id="uptime">--:--:--</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>&copy; 2024 SafeGuard Pro - Industrial IoT Gas Detection System | Developed for Professional Monitoring</p>
+  </div>
+
+  <script>
+    let connectionErrorCount = 0;
+    let startTime = new Date();
+    
+    function formatTime() {
+      const now = new Date();
+      return now.toLocaleTimeString();
+    }
+
+    function formatUptime() {
+      const now = new Date();
+      const diff = now - startTime;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+    
+    async function fetchData() {
+      const connectionStatus = document.getElementById('connectionStatus');
+      
+      try {
+        const response = await fetch('/data');
+        const data = await response.json();
+        connectionErrorCount = 0;
+        
+        // Update connection status
+        connectionStatus.className = 'status-indicator online';
+        connectionStatus.innerHTML = '<i class="fas fa-circle"></i><span>System Online</span>';
+        
+        // Update main status
+        const mainStatusIcon = document.getElementById('mainStatusIcon');
+        const mainStatusText = document.getElementById('mainStatusText');
+        const mainStatusDesc = document.getElementById('mainStatusDesc');
+        const alertBanner = document.getElementById('alertBanner');
+        
+        if (data.gas_detected) {
+          mainStatusIcon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+          mainStatusIcon.className = 'status-icon-large status-danger';
+          mainStatusText.textContent = 'HAZARDOUS GAS DETECTED';
+          mainStatusText.className = 'status-text-large status-danger';
+          mainStatusDesc.textContent = 'Critical alert! Safety protocols activated - Immediate action required';
+          alertBanner.classList.add('show');
+          
+          // Update gas trend
+          document.getElementById('gasTrend').innerHTML = '<i class="fas fa-arrow-up"></i><span>Critical Level</span>';
+          document.getElementById('gasTrend').className = 'metric-trend trend-down';
+          
+          // Update relay status
+          document.getElementById('relayStatus').textContent = 'ACTIVATED';
+          document.getElementById('deviceStatus').textContent = 'Alert Mode';
+        } else {
+          mainStatusIcon.innerHTML = '<i class="fas fa-shield-check"></i>';
+          mainStatusIcon.className = 'status-icon-large status-safe';
+          mainStatusText.textContent = 'ENVIRONMENT SAFE';
+          mainStatusText.className = 'status-text-large status-safe';
+          mainStatusDesc.textContent = 'All systems operational - No hazardous gases detected';
+          alertBanner.classList.remove('show');
+          
+          // Update gas trend
+          document.getElementById('gasTrend').innerHTML = '<i class="fas fa-minus"></i><span>Safe Range</span>';
+          document.getElementById('gasTrend').className = 'metric-trend trend-stable';
+          
+          // Update relay status
+          document.getElementById('relayStatus').textContent = 'Standby';
+          document.getElementById('deviceStatus').textContent = 'Online';
+        }
+        
+        // Update metric values
+        document.getElementById('temperatureValue').textContent = data.temperature || '--';
+        document.getElementById('humidityValue').textContent = data.humidity || '--';
+        document.getElementById('gasValue').textContent = data.gas_value || '--';
+        
+        // Update timestamps
+        document.getElementById('lastUpdate').textContent = formatTime();
+        document.getElementById('uptime').textContent = formatUptime();
+
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        connectionErrorCount++;
+        
+        if (connectionErrorCount > 2) {
+          connectionStatus.className = 'status-indicator offline';
+          connectionStatus.innerHTML = '<i class="fas fa-circle"></i><span>System Offline</span>';
+          document.getElementById('deviceStatus').textContent = 'Offline';
+        }
+      }
+    }
+
+    // Initialize and start data fetching
+    window.onload = function () {
+      fetchData(); // initial load
+      setInterval(fetchData, 2000); // every 2 seconds
+      setInterval(() => {
+        document.getElementById('uptime').textContent = formatUptime();
+      }, 1000); // update uptime every second
+    };
+  </script>
+</body>
+</html>
